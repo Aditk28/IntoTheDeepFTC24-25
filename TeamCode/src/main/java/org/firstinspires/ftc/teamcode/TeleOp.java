@@ -7,9 +7,9 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
-
 @com.qualcomm.robotcore.eventloop.opmode.TeleOp(name="TeleOp", group="Linear Opmode")
 public class TeleOp extends LinearOpMode {
 
@@ -65,14 +65,15 @@ public class TeleOp extends LinearOpMode {
         // Most robots need the motor on one side to be reversed to drive forward - was done in Sample Mecanum Drive
         // Reverse the motor that runs backwards when connected directly to the battery
         verticalLift = hardwareMap.get(DcMotorEx.class, "verticalLift");
-//        horizontalLift = hardwareMap.get(DcMotorEx.class, "horizontalLift");
+        horizontalLift = hardwareMap.get(DcMotorEx.class, "horizontalLift");
 //        intakeServo = hardwareMap.crservo.get("intakeServo");
 //        outtakeServo = hardwareMap.get(Servo.class, "outtakeServo");
 //        armServo = hardwareMap.get(Servo.class, "armServo");
         verticalLift.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         verticalLift.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
-//        horizontalLift.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
-//        horizontalLift.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+        verticalLift.setDirection(DcMotorSimple.Direction.REVERSE);
+        horizontalLift.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+        horizontalLift.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
 
 //        distanceSensorLeft = hardwareMap.get(DistanceSensor.class, "distanceSensorLeft");
 //
@@ -196,6 +197,16 @@ public class TeleOp extends LinearOpMode {
                 }
             }
 
+            //horizontalLift
+            if (gamepad1.dpad_up && horizontalLift.getCurrentPosition() <= 2100) {
+                horizontalLift.setPower(0.9);
+            } else if (gamepad1.dpad_down && horizontalLift.getCurrentPosition() > 0) {
+                horizontalLift.setPower(-0.9);
+            } else {
+                    horizontalLift.setPower(0);
+                    horizontalLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+            }
+
 //            //lift reset
             if ((gamepad2.b || gamepad1.b) && verticalLift.getCurrentPosition() > 0) {
                 verticalLift.setPower(-0.50);
@@ -289,6 +300,8 @@ public class TeleOp extends LinearOpMode {
             telemetry.addData("DriveMode: ", (turtleMode) ? ("turtleMode") : ("Normal"));
             telemetry.addData("OTHER", "------------------------------------");
             telemetry.addData("DriveType: ", (fieldOriented) ? ("Field-Oriented Drive") : ("Robot-Oriented"));
+            telemetry.addData("liftMotorPosition", verticalLift.getCurrentPosition());
+            telemetry.addData("horizontalliftMotorPosition", horizontalLift.getCurrentPosition());
 // ANKARA MESSI
 
 
