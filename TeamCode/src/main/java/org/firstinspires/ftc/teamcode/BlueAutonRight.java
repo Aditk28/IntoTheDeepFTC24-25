@@ -5,10 +5,17 @@ import androidx.annotation.NonNull;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
+import com.acmerobotics.roadrunner.ParallelAction;
 import com.acmerobotics.roadrunner.Pose2d;
+import com.acmerobotics.roadrunner.SequentialAction;
+import com.acmerobotics.roadrunner.SleepAction;
+import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
+import com.acmerobotics.roadrunner.Vector2d;
+import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
@@ -16,16 +23,16 @@ import com.qualcomm.robotcore.hardware.Servo;
 // Non-RR imports
 
 @Config
-@Autonomous(name = "BLUE_TEST_AUTO_PIXEL", group = "Autonomous")
+@Autonomous(name = "BlueAutonRight", group = "Autonomous")
 public class BlueAutonRight extends LinearOpMode {
 
     public class Intake{
         private DcMotorEx lift;
-        private Servo arm;
+     //   private Servo arm;
 
         public Intake(HardwareMap hardwareMap){
-            lift = hardwareMap.get(DcMotorEx.class, "horizontaLift");
-            arm = hardwareMap.get(Servo.class, "intakeServo");
+            lift = hardwareMap.get(DcMotorEx.class, "horizontalLift");
+          //  arm = hardwareMap.get(Servo.class, "intakeServo");
         }
 
         public class LiftOut implements Action {
@@ -62,7 +69,11 @@ public class BlueAutonRight extends LinearOpMode {
         }
 
         public Action liftOut() {
-            return new LiftOut(1000);
+            return liftOut(1000);
+
+        }
+        public Action liftOut(int pos) {
+            return new LiftOut(pos);
         }
 
         public class LiftIn implements Action {
@@ -79,9 +90,9 @@ public class BlueAutonRight extends LinearOpMode {
                     initialized = true;
                 }
 
-                double pos = lift.getCurrentPosition();
-                packet.put("liftPos", pos);
-                if (pos > 50.0) {
+                double currentPosition = lift.getCurrentPosition();
+                packet.put("liftPos", currentPosition);
+                if (currentPosition > pos) {
                     return true;
                 } else {
                     lift.setPower(0);
@@ -90,8 +101,11 @@ public class BlueAutonRight extends LinearOpMode {
             }
         }
 
+        public Action liftIn(int pos) {
+            return new LiftIn(pos);
+        }
         public Action liftIn() {
-            return new LiftIn(1000);
+            return liftIn(50);
         }
 
         //NEED TO CODE AXON SERVO
@@ -101,16 +115,20 @@ public class BlueAutonRight extends LinearOpMode {
     public class Outtake{
         private DcMotorEx lift;
         private Servo claw;
+        private Servo rotater;
 
         public Outtake(HardwareMap hardwareMap){
             lift = hardwareMap.get(DcMotorEx.class, "verticalLift");
-            claw = hardwareMap.get(Servo.class, "outtakeServo");
+            claw = hardwareMap.get(Servo.class, "claw");
+            rotater = hardwareMap.get(Servo.class, "rotater");
+            lift.setDirection(DcMotorSimple.Direction.REVERSE);
         }
 
         public class LiftUp implements Action {
             // checks if the lift motor has been powered on
             private boolean initialized = false;
             private int pos;
+            private final double outtakePos = .2;
 
             public LiftUp(int pos) {
                 this.pos = pos;
@@ -126,9 +144,12 @@ public class BlueAutonRight extends LinearOpMode {
                 }
 
                 // checks lift's current position
-                double pos = lift.getCurrentPosition();
-                packet.put("liftPos", pos);
-                if (pos < 2100.0) {
+                double currentPosition = lift.getCurrentPosition();
+                packet.put("liftPos", currentPosition);
+                if (rotater.getPosition() != outtakePos && currentPosition > 450) {
+                    rotater.setPosition(outtakePos);
+                }
+                if (currentPosition < pos) {
                     // true causes the action to rerun
                     return true;
                 } else {
@@ -142,12 +163,16 @@ public class BlueAutonRight extends LinearOpMode {
         }
 
         public Action liftUp() {
-            return new LiftUp(1000);
+            return liftUp(3000);
+        }
+        public Action liftUp(int pos) {
+            return new LiftUp(pos);
         }
 
         public class LiftDown implements Action {
             private boolean initialized = false;
             private int pos;
+            private final double intakePos = .5;
             public LiftDown(int pos) {
                 this.pos = pos;
             }
@@ -159,9 +184,13 @@ public class BlueAutonRight extends LinearOpMode {
                     initialized = true;
                 }
 
-                double pos = lift.getCurrentPosition();
-                packet.put("liftPos", pos);
-                if (pos > 100.0) {
+
+                double currentPosition = lift.getCurrentPosition();
+                packet.put("liftPos", currentPosition);
+                if (rotater.getPosition() != intakePos && currentPosition < 450) {
+                    rotater.setPosition(intakePos);
+                }
+                if (currentPosition > pos) {
                     return true;
                 } else {
                     lift.setPower(0);
@@ -170,41 +199,15 @@ public class BlueAutonRight extends LinearOpMode {
             }
         }
 
+        public Action liftDown(int pos) {
+            return new LiftDown(pos);
+        }
         public Action liftDown() {
-            return new LiftDown(1000);
+            return liftDown(100);
         }
 
     }
 
-    public class rotateClaw {
-        private Servo rotateClaw;
-
-        public rotateClaw(HardwareMap hardwareMap) {
-            rotateClaw = hardwareMap.get(Servo.class, "claw");
-        }
-
-        public class RotateIntake implements Action {
-            @Override
-            public boolean run(@NonNull TelemetryPacket packet) {
-                rotateClaw.setPosition(0.0);
-                return false;
-            }
-        }
-        public Action rotateIntake() {
-            return new RotateIntake();
-        }
-
-        public class RotateOuttake implements Action {
-            @Override
-            public boolean run(@NonNull TelemetryPacket packet) {
-                rotateClaw.setPosition(1.0);
-                return false;
-            }
-        }
-        public Action rotateOuttake() {
-            return new RotateOuttake();
-        }
-    }
 
     public class Claw {
         private Servo Claw;
@@ -216,7 +219,7 @@ public class BlueAutonRight extends LinearOpMode {
         public class CloseClaw implements Action {
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
-                Claw.setPosition(0.3);
+                Claw.setPosition(0.5);
                 return false;
             }
         }
@@ -240,16 +243,98 @@ public class BlueAutonRight extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         // instantiate your MecanumDrive at a particular pose.
-        Pose2d initialPose = new Pose2d(11.8, 61.7, Math.toRadians(90));
+        Pose2d initialPose = new Pose2d(0, 0, 0);
         MecanumDrive drive = new MecanumDrive(hardwareMap, initialPose);
         // make a Claw instance
         Claw claw = new Claw(hardwareMap);
         // make a Lift instance
-        Intake hlift = new Intake(hardwareMap);
-        Outtake vlift = new Outtake(hardwareMap);
         Intake intake = new Intake(hardwareMap);
 
+        Outtake outtake = new Outtake(hardwareMap);
 
+
+        TrajectoryActionBuilder goToSubmersible = drive.actionBuilder(initialPose)
+                .strafeToConstantHeading(new Vector2d(-24, -36));
+        TrajectoryActionBuilder pickUpBrick = goToSubmersible.fresh()
+                .strafeToLinearHeading(new Vector2d(-18,12),Math.toRadians(150));
+        TrajectoryActionBuilder dropBrick = pickUpBrick.fresh()
+                .strafeToLinearHeading(new Vector2d(-20,12),0);
+        TrajectoryActionBuilder pickUpBrick2 = dropBrick.fresh()
+                .strafeToLinearHeading(new Vector2d(-18,15),Math.toRadians(150));
+        TrajectoryActionBuilder dropBrick2 = pickUpBrick2.fresh()
+                .strafeToLinearHeading(new Vector2d(-20,12),0);
+        TrajectoryActionBuilder pickUpClip = dropBrick2.fresh()
+                .strafeToLinearHeading(new Vector2d(-1, -1),Math.toRadians(180));
+        TrajectoryActionBuilder goToSubmersible2 = pickUpClip.fresh()
+                .strafeToConstantHeading(new Vector2d(-24, -36));
+        TrajectoryActionBuilder pickUpClip2 = goToSubmersible2.fresh()
+                .strafeToLinearHeading(new Vector2d(-1, -1), Math.toRadians(180));
+        TrajectoryActionBuilder goToSubmersible3 = pickUpClip2.fresh()
+                .strafeToConstantHeading(new Vector2d(-24, -36));
+
+
+//        while (!isStopRequested() && !opModeIsActive()) {
+//            int position = visionOutputPosition;
+//            telemetry.addData("Position during Init", position);
+//            telemetry.update();
+//        }
+//        int startPosition = visionOutputPosition;
+//        telemetry.addData("Starting Position", startPosition);
+//        telemetry.update();
+        waitForStart();
+        if (isStopRequested()) return;
+        Servo rotater = rotater = hardwareMap.get(Servo.class, "rotater");
+        rotater.setPosition(.5);
+
+        Actions.runBlocking(
+                new SequentialAction(
+                        new ParallelAction(
+                            goToSubmersible.build(),
+                            outtake.liftUp(2400)
+                        ),
+                        outtake.liftDown(2000),
+                        claw.openClaw(),
+                        new ParallelAction(
+                            outtake.liftDown(),
+                            intake.liftOut(1000),
+                            pickUpBrick.build()
+                        ),
+                        new SleepAction(1),
+                        dropBrick.build(),
+                        new SleepAction(1),
+                        pickUpBrick2.build(),
+                        new SleepAction(1),
+                        dropBrick2.build(),
+                        new SleepAction(1),
+                        new ParallelAction(
+                                intake.liftIn(50),
+                                pickUpClip.build(),
+                                outtake.liftUp(460)
+                        ),
+                        new SleepAction(2),
+                        claw.closeClaw(),
+                        new SleepAction(1),
+                        new ParallelAction(
+                                goToSubmersible2.build(),
+                                outtake.liftUp(2400)
+                        ),
+                        outtake.liftDown(2000),
+                        claw.openClaw(),
+                        new ParallelAction(
+                                pickUpClip2.build(),
+                                outtake.liftDown(460)
+                        ),
+                        new SleepAction(2),
+                        claw.closeClaw(),
+                        new SleepAction(1),
+                        new ParallelAction(
+                                goToSubmersible3.build(),
+                                outtake.liftUp(2400)
+                        ),
+                        outtake.liftDown(2000),
+                        claw.openClaw()
+
+        ));
     }
 
 }

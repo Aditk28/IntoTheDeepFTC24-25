@@ -18,7 +18,8 @@ public class TeleOp extends LinearOpMode {
 
     //Hardware: Declaring all the robot parts
     public DcMotorEx horizontalLift;
-
+    public Servo claw;
+    public Servo rotater;
     public DcMotorEx verticalLift;
     public CRServo intakeServo;
 
@@ -45,6 +46,11 @@ public class TeleOp extends LinearOpMode {
     public double rotationSpeed = 1;
     public boolean fieldOriented = false;
 
+    public double closeClaw = .42;
+    public double openClaw = 0;
+    public double intakePos = .5;
+    public double outtakePos = .2;
+
     public double idealPosition() {
         return 0;
     }
@@ -67,7 +73,8 @@ public class TeleOp extends LinearOpMode {
         verticalLift = hardwareMap.get(DcMotorEx.class, "verticalLift");
         horizontalLift = hardwareMap.get(DcMotorEx.class, "horizontalLift");
 //        intakeServo = hardwareMap.crservo.get("intakeServo");
-//        outtakeServo = hardwareMap.get(Servo.class, "outtakeServo");
+        claw = hardwareMap.get(Servo.class, "claw");
+        rotater = hardwareMap.get(Servo.class, "rotater");
 //        armServo = hardwareMap.get(Servo.class, "armServo");
         verticalLift.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         verticalLift.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
@@ -197,6 +204,21 @@ public class TeleOp extends LinearOpMode {
                 }
             }
 
+            //outtake
+            if (verticalLift.getCurrentPosition() < 400 && rotater.getPosition() != intakePos) {
+                rotater.setPosition(intakePos);
+            } else if (verticalLift.getCurrentPosition() >= 400 && rotater.getPosition() != outtakePos){
+                rotater.setPosition(outtakePos);
+            }
+
+            if (gamepad1.x) {
+                claw.setPosition(closeClaw);
+            }
+            else if (gamepad1.b) {
+                claw.setPosition(openClaw);
+            }
+
+
             //horizontalLift
             if (gamepad1.dpad_up && horizontalLift.getCurrentPosition() <= 2100) {
                 horizontalLift.setPower(0.9);
@@ -282,8 +304,8 @@ public class TeleOp extends LinearOpMode {
             //else {
 
             drive.setDrivePowers(
-                    new PoseVelocity2d(new Vector2d(-gamepad1.left_stick_y * robotSpeed,
-                            -gamepad1.left_stick_x * robotSpeed),
+                    new PoseVelocity2d(new Vector2d(gamepad1.left_stick_y * robotSpeed,
+                            gamepad1.left_stick_x * robotSpeed),
                             -gamepad1.right_stick_x * robotSpeed * rotationSpeed
                     )
             );
@@ -296,12 +318,12 @@ public class TeleOp extends LinearOpMode {
             // Show the elapsed game time and wheel power.
 //            telemetry.addData("tilt servo position", tiltServo.getPosition());
             telemetry.addData("Status", "Run Time: " + runtime.toString());
-            telemetry.addData("DRIVE", "------------------------------------");
             telemetry.addData("DriveMode: ", (turtleMode) ? ("turtleMode") : ("Normal"));
-            telemetry.addData("OTHER", "------------------------------------");
             telemetry.addData("DriveType: ", (fieldOriented) ? ("Field-Oriented Drive") : ("Robot-Oriented"));
             telemetry.addData("liftMotorPosition", verticalLift.getCurrentPosition());
             telemetry.addData("horizontalliftMotorPosition", horizontalLift.getCurrentPosition());
+            telemetry.addData("rotaterPosition", rotater.getPosition());
+            telemetry.addData("clawPos", claw.getPosition());
 // ANKARA MESSI
 
 
