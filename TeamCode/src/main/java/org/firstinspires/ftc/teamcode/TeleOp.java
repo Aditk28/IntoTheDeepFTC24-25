@@ -48,7 +48,7 @@ public class TeleOp extends LinearOpMode {
 
     public double closeClaw = .42;
     public double openClaw = 0;
-    public double intakePos = .5;
+    public double intakePos = .55;
     public double outtakePos = .2;
 
     public double idealPosition() {
@@ -72,10 +72,10 @@ public class TeleOp extends LinearOpMode {
         // Reverse the motor that runs backwards when connected directly to the battery
         verticalLift = hardwareMap.get(DcMotorEx.class, "verticalLift");
         horizontalLift = hardwareMap.get(DcMotorEx.class, "horizontalLift");
-//        intakeServo = hardwareMap.crservo.get("intakeServo");
+        intakeServo = hardwareMap.crservo.get("intakeServo");
         claw = hardwareMap.get(Servo.class, "claw");
         rotater = hardwareMap.get(Servo.class, "rotater");
-//        armServo = hardwareMap.get(Servo.class, "armServo");
+        armServo = hardwareMap.get(Servo.class, "armServo");
         verticalLift.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         verticalLift.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
         verticalLift.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -198,13 +198,16 @@ public class TeleOp extends LinearOpMode {
             } else {
                 verticalLift.setPower(0.0);
                 if ((gamepad2.left_trigger == 0 && gamepad1.left_trigger == 0) && (!gamepad1.b && !gamepad2.b) && verticalLift.getCurrentPosition() >= 100) {
-                    verticalLift.setPower(0.02);
+                    verticalLift.setPower(0.03);
                 } else {
                     verticalLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
                 }
             }
 
+
+
             //outtake
+            //McNugget
             if (verticalLift.getCurrentPosition() < 400 && rotater.getPosition() != intakePos) {
                 rotater.setPosition(intakePos);
             } else if (verticalLift.getCurrentPosition() >= 400 && rotater.getPosition() != outtakePos){
@@ -216,6 +219,27 @@ public class TeleOp extends LinearOpMode {
             }
             else if (gamepad1.b) {
                 claw.setPosition(openClaw);
+            }
+
+            //arm
+            int outPosition = 0;
+            int inPosition = 1;
+            if (armServo.getPosition() != outPosition && horizontalLift.getCurrentPosition() >= 400) {
+                armServo.setPosition(outPosition);
+            }
+            if (armServo.getPosition() != inPosition && horizontalLift.getCurrentPosition() < 400) {
+                armServo.setPosition(inPosition);
+            }
+
+            //intake
+            if (gamepad1.right_bumper) {
+                intakeServo.setPower(1);
+            }
+            else if (gamepad1.left_bumper) {
+                intakeServo.setPower(-1);
+            }
+            else {
+                intakeServo.setPower(0);
             }
 
 
@@ -230,9 +254,9 @@ public class TeleOp extends LinearOpMode {
             }
 
 //            //lift reset
-            if ((gamepad2.b || gamepad1.b) && verticalLift.getCurrentPosition() > 0) {
-                verticalLift.setPower(-0.50);
-            }
+//            if ((gamepad2.b || gamepad1.b) && verticalLift.getCurrentPosition() > 0) {
+//                verticalLift.setPower(-0.50);
+//            }
 
 
 
