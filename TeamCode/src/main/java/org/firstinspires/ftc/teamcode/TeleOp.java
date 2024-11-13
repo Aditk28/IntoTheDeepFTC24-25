@@ -190,6 +190,24 @@ public class TeleOp extends LinearOpMode {
 //                outtake.setPower(0);
 //            }
 
+
+            //automating intake & transfer
+            if (gamepad1.y || gamepad2.y){
+                if (armServo.getPosition() != 1) armServo.setPosition(1);
+                if (horizontalLift.getCurrentPosition() != 0){
+                    horizontalLift.setPower(-.9);
+                }
+                claw.setPosition(openClaw);
+                if (horizontalLift.getCurrentPosition == 0) {
+                    intakeServo.setPower(-1);
+                    Thread.sleep(3000);
+                    claw.setPosition(closeClaw);
+                    intakeServo.setPower(0);
+                }
+            }
+
+
+
             //verticalLift
             if (gamepad1.left_trigger != 0 && verticalLift.getCurrentPosition() >= 0) {
                 verticalLift.setPower(-0.9);
@@ -207,10 +225,10 @@ public class TeleOp extends LinearOpMode {
 
 
             //outtake
-            //McNugget
-            if (verticalLift.getCurrentPosition() < 400 && rotater.getPosition() != intakePos) {
+            //Nugget
+            if (verticalLift.getCurrentPosition() < 500 && rotater.getPosition() != intakePos) {
                 rotater.setPosition(intakePos);
-            } else if (verticalLift.getCurrentPosition() >= 400 && rotater.getPosition() != outtakePos){
+            } else if (verticalLift.getCurrentPosition() >= 500 && rotater.getPosition() != outtakePos){
                 rotater.setPosition(outtakePos);
             }
 
