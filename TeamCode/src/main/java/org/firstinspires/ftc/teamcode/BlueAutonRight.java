@@ -14,6 +14,7 @@ import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -26,13 +27,36 @@ import com.qualcomm.robotcore.hardware.Servo;
 @Autonomous(name = "BlueAutonRight", group = "Autonomous")
 public class BlueAutonRight extends LinearOpMode {
 
-    public class Intake{
+    public static class Intake{
         private DcMotorEx lift;
+        private Servo arm;
+
+        private CRServo intakeServo;
+        final double out = 0;
+        final double in = 1;
      //   private Servo arm;
+
 
         public Intake(HardwareMap hardwareMap){
             lift = hardwareMap.get(DcMotorEx.class, "horizontalLift");
-          //  arm = hardwareMap.get(Servo.class, "intakeServo");
+            arm = hardwareMap.get(Servo.class, "armServo");
+            intakeServo = hardwareMap.get(CRServo.class, "intakeServo");
+        }
+
+        public class Outtaking implements Action{
+            private double pow;
+            public Outtaking(double pow) {
+                this.pow = pow;
+            }
+            @Override
+            public boolean run(@NonNull TelemetryPacket packet){
+                intakeServo.setPower(pow);
+                return false;
+
+            }
+        }
+        public Action outtaking(double pow) {
+            return new Outtaking(pow);
         }
 
         public class LiftOut implements Action {
@@ -55,6 +79,7 @@ public class BlueAutonRight extends LinearOpMode {
                 // checks lift's current position
                 double currentPosition = lift.getCurrentPosition();
                 packet.put("liftPos", currentPosition);
+
                 if (currentPosition < pos) {
                     // true causes the action to rerun
                     return true;
@@ -83,6 +108,7 @@ public class BlueAutonRight extends LinearOpMode {
                 this.pos = pos;
             }
 
+
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
                 if (!initialized) {
@@ -92,6 +118,7 @@ public class BlueAutonRight extends LinearOpMode {
 
                 double currentPosition = lift.getCurrentPosition();
                 packet.put("liftPos", currentPosition);
+
                 if (currentPosition > pos) {
                     return true;
                 } else {
@@ -101,6 +128,7 @@ public class BlueAutonRight extends LinearOpMode {
             }
         }
 
+
         public Action liftIn(int pos) {
             return new LiftIn(pos);
         }
@@ -108,11 +136,29 @@ public class BlueAutonRight extends LinearOpMode {
             return liftIn(50);
         }
 
-        //NEED TO CODE AXON SERVO
 
+
+        public class MoveArm implements Action {
+            private int pos;
+            public MoveArm(int pos) {
+                this.pos = pos;
+            }
+
+
+            @Override
+            public boolean run(@NonNull TelemetryPacket packet) {
+                arm.setPosition(pos);
+                return false;
+            }
+        }
+
+
+        public Action moveArm(int pos) {
+            return new MoveArm(pos);
+        }
     }
 
-    public class Outtake{
+    public static class Outtake{
         private DcMotorEx lift;
         private Servo claw;
         private Servo rotater;
@@ -209,7 +255,7 @@ public class BlueAutonRight extends LinearOpMode {
     }
 
 
-    public class Claw {
+    public static class Claw {
         private Servo Claw;
 
         public Claw(HardwareMap hardwareMap) {
