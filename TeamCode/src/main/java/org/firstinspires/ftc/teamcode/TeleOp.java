@@ -49,7 +49,7 @@ public class TeleOp extends OpMode {
     public double intakePos = .55;
     public double outtakePos = .2;
     private final int outPosition = 0;
-    private final int inPosition = 1;
+    private final double inPosition = .95;
     private MecanumDrive drive;
 
     private FtcDashboard dash = FtcDashboard.getInstance();
@@ -111,19 +111,20 @@ public class TeleOp extends OpMode {
 
         if ((gamepad1.y || gamepad2.y)){
             try {
-                Thread.sleep(50);
+                Thread.sleep(100);
+
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
 
             runningActions.add(new SequentialAction(
                         new ParallelAction(
-                                intake.moveArm(inPosition),
+                                intake.moveArmIn(),
                                 intake.liftIn(0),
                                 claws.openClaw(),
                                 outtake.liftDown(0)
                         ),
-                    new SleepAction(2),
+                    new SleepAction(1.5),
                     intake.outtaking(-1.0),
                     new SleepAction(2),
                     intake.outtaking(0.0),

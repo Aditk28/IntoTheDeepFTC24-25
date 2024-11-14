@@ -58,6 +58,9 @@ public class BlueAutonRight extends LinearOpMode {
         public Action outtaking(double pow) {
             return new Outtaking(pow);
         }
+        public Action startIntaking() { return outtaking(1); }
+        public Action startOuttaking() { return outtaking(-1); }
+        public Action stopIntake() { return outtaking(0); }
 
         public class LiftOut implements Action {
             // checks if the lift motor has been powered on
@@ -139,8 +142,8 @@ public class BlueAutonRight extends LinearOpMode {
 
 
         public class MoveArm implements Action {
-            private int pos;
-            public MoveArm(int pos) {
+            private double pos;
+            public MoveArm(double pos) {
                 this.pos = pos;
             }
 
@@ -153,9 +156,11 @@ public class BlueAutonRight extends LinearOpMode {
         }
 
 
-        public Action moveArm(int pos) {
+        public Action moveArm(double pos) {
             return new MoveArm(pos);
         }
+        public Action moveArmOut() { return moveArm(0); }
+        public Action moveArmIn() { return moveArm(1); }
     }
 
     public static class Outtake{
@@ -300,15 +305,15 @@ public class BlueAutonRight extends LinearOpMode {
 
 
         TrajectoryActionBuilder goToSubmersible = drive.actionBuilder(initialPose)
-                .strafeToConstantHeading(new Vector2d(-24, -36));
+                .strafeToConstantHeading(new Vector2d(-23.2, -36));
         TrajectoryActionBuilder pickUpBrick = goToSubmersible.fresh()
-                .strafeToLinearHeading(new Vector2d(-18,12),Math.toRadians(150));
+                .strafeToLinearHeading(new Vector2d(-24,11),Math.toRadians(150));
         TrajectoryActionBuilder dropBrick = pickUpBrick.fresh()
-                .strafeToLinearHeading(new Vector2d(-20,12),0);
+                .strafeToLinearHeading(new Vector2d(-25,12),0);
         TrajectoryActionBuilder pickUpBrick2 = dropBrick.fresh()
-                .strafeToLinearHeading(new Vector2d(-18,15),Math.toRadians(150));
+                .strafeToLinearHeading(new Vector2d(-21,10),Math.toRadians(150));
         TrajectoryActionBuilder dropBrick2 = pickUpBrick2.fresh()
-                .strafeToLinearHeading(new Vector2d(-20,12),0);
+                .strafeToLinearHeading(new Vector2d(-25,12),0);
         TrajectoryActionBuilder pickUpClip = dropBrick2.fresh()
                 .strafeToLinearHeading(new Vector2d(-1, -1),Math.toRadians(180));
         TrajectoryActionBuilder goToSubmersible2 = pickUpClip.fresh()
@@ -343,19 +348,29 @@ public class BlueAutonRight extends LinearOpMode {
                         new ParallelAction(
                             outtake.liftDown(),
                             intake.liftOut(1000),
+                            intake.moveArm(0.1),
+                            intake.startIntaking(),
                             pickUpBrick.build()
                         ),
-                        new SleepAction(1),
+                        new SleepAction(2),
+                        intake.stopIntake(),
                         dropBrick.build(),
+                        intake.startOuttaking(),
                         new SleepAction(1),
+                        intake.stopIntake(),
                         pickUpBrick2.build(),
-                        new SleepAction(1),
+                        intake.startIntaking(),
+                        new SleepAction(2),
+                        intake.stopIntake(),
                         dropBrick2.build(),
-                        new SleepAction(1),
+                        intake.startOuttaking(),
+                        new SleepAction(2),
+                        intake.stopIntake(),
                         new ParallelAction(
+                                intake.moveArmIn(),
                                 intake.liftIn(50),
                                 pickUpClip.build(),
-                                outtake.liftUp(460)
+                                outtake.liftUp(500)
                         ),
                         new SleepAction(2),
                         claw.closeClaw(),
