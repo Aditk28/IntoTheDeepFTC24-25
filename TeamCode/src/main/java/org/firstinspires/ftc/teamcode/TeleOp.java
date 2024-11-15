@@ -31,6 +31,8 @@ public class TeleOp extends OpMode {
     public Servo claw;
     public Servo rotater;
     public DcMotorEx verticalLift;
+
+//    public DcMotorEx suspension;
     public CRServo intakeServo;
     public Servo armServo;
 
@@ -46,7 +48,7 @@ public class TeleOp extends OpMode {
 
     public double closeClaw = .42;
     public double openClaw = 0;
-    public double intakePos = .55;
+    public double intakePos = .5;
     public double outtakePos = .2;
     private final int outPosition = 0;
     private final double inPosition = 1;
@@ -66,6 +68,7 @@ public class TeleOp extends OpMode {
         // step (using the FTC Robot Controller app on the phone).
         drive = new MecanumDrive(hardwareMap, new Pose2d(0,0,0));
         verticalLift = hardwareMap.get(DcMotorEx.class, "verticalLift");
+//        suspension = hardwareMap.get(DcMotorEx.class, "perp");
         horizontalLift = hardwareMap.get(DcMotorEx.class, "horizontalLift");
         intakeServo = hardwareMap.crservo.get("intakeServo");
         claw = hardwareMap.get(Servo.class, "claw");
@@ -129,19 +132,19 @@ public class TeleOp extends OpMode {
         //Nugget
         if (runnable) {
             //verticalLift
-            if (gamepad1.left_trigger != 0 && verticalLift.getCurrentPosition() >= 0) {
+            if ((gamepad1.left_trigger != 0 || gamepad2.left_trigger != 0) && verticalLift.getCurrentPosition() >= 0) {
                 verticalLift.setPower(-0.9);
-            } else if (gamepad1.right_trigger != 0 && verticalLift.getCurrentPosition() <= 4200) {
+            } else if ((gamepad1.right_trigger != 0 || gamepad2.right_trigger != 0) && verticalLift.getCurrentPosition() <= 4200) {
                 verticalLift.setPower(0.9);
             } else {
                 verticalLift.setPower(0.0);
-                if ((gamepad2.left_trigger == 0 && gamepad1.left_trigger == 0) && (!gamepad1.b && !gamepad2.b) && verticalLift.getCurrentPosition() >= 100) {
-                    verticalLift.setPower(0.03);
+                if (verticalLift.getCurrentPosition() >= 100) {
+                    verticalLift.setPower(0.05);
                 } else {
                     verticalLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
                 }
             }
-            //outtake
+            //outtake7
             if (verticalLift.getCurrentPosition() < 500 && rotater.getPosition() != intakePos) {
                 rotater.setPosition(intakePos);
             } else if (verticalLift.getCurrentPosition() >= 500 && rotater.getPosition() != outtakePos){
@@ -198,11 +201,21 @@ public class TeleOp extends OpMode {
             robotSpeed = NORMAL_SPEED;
         }
 
+        //suspension
+//
+//        if (gamepad2.dpad_right) {
+//            suspension.setPower(.9);
+//        }
+//        else if (gamepad2.dpad_left) {
+//            suspension.setPower(-0.9);
+//        }else {
+//            suspension.setPower(0);
+//        }
 
         //movement
         drive.setDrivePowers(
-                new PoseVelocity2d(new Vector2d(gamepad1.left_stick_y * robotSpeed,
-                        gamepad1.left_stick_x * robotSpeed),
+                new PoseVelocity2d(new Vector2d(-gamepad1.left_stick_y * robotSpeed,
+                        -gamepad1.left_stick_x * robotSpeed),
                         -gamepad1.right_stick_x * robotSpeed * rotationSpeed
                 )
         );
