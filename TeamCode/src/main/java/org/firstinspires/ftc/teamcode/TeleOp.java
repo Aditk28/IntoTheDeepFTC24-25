@@ -54,6 +54,7 @@ public class TeleOp extends OpMode {
     private final double inPosition = 1;
     private MecanumDrive drive;
 
+    private boolean removeBounds = false;
     private FtcDashboard dash = FtcDashboard.getInstance();
     private List<Action> runningActions = new ArrayList<>();
 
@@ -108,9 +109,9 @@ public class TeleOp extends OpMode {
         telemetry.update();
 
         //automating intake & transfer
-        BlueAutonRight.Intake intake = new BlueAutonRight.Intake(hardwareMap);
-        BlueAutonRight.Claw claws = new BlueAutonRight.Claw(hardwareMap);
-        BlueAutonRight.Outtake outtake = new BlueAutonRight.Outtake(hardwareMap);
+        RightSideAutonomous.Intake intake = new RightSideAutonomous.Intake(hardwareMap);
+        RightSideAutonomous.Claw claws = new RightSideAutonomous.Claw(hardwareMap);
+        RightSideAutonomous.Outtake outtake = new RightSideAutonomous.Outtake(hardwareMap);
 
         if (runnable && (gamepad1.y || gamepad2.y)){
             runningActions.add(new SequentialAction(
@@ -118,7 +119,7 @@ public class TeleOp extends OpMode {
                                 intake.moveArmIn(),
                                 intake.liftIn(0),
                                 claws.openClaw(),
-                                outtake.liftDown(0)
+                                outtake.liftDown(25)
                         ),
                     new SleepAction(1.5),
                     intake.outtaking(-1.0),
@@ -129,32 +130,45 @@ public class TeleOp extends OpMode {
             );
         }
 
+        if (runnable && (gamepad2.a || gamepad1.a)) {
+//            verticalLift.
+            verticalLift.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+            verticalLift.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+        }
+
+
         //Nugget
         if (runnable) {
+            //bounds
+            if (gamepad2.dpad_right) removeBounds = true;
+            if (gamepad2.dpad_left) removeBounds = false;
+
             //verticalLift
-            if ((gamepad1.left_trigger != 0 || gamepad2.left_trigger != 0) && verticalLift.getCurrentPosition() >= 0) {
+            if ( ((gamepad1.left_trigger != 0 && verticalLift.getCurrentPosition() >= 0) || (gamepad1.left_trigger != 0 && removeBounds)) ||
+            ((gamepad2.left_trigger != 0 && verticalLift.getCurrentPosition() >= 0) || (gamepad2.left_trigger != 0 && removeBounds)) ){
                 verticalLift.setPower(-0.9);
-            } else if ((gamepad1.right_trigger != 0 || gamepad2.right_trigger != 0) && verticalLift.getCurrentPosition() <= 4200) {
+            } else if (((gamepad1.right_trigger != 0 && verticalLift.getCurrentPosition() <= 4200) || (gamepad1.right_trigger != 0 && removeBounds)) ||
+                    ((gamepad2.right_trigger != 0 && verticalLift.getCurrentPosition() <= 4200) || (gamepad2.right_trigger != 0 && removeBounds))) {
                 verticalLift.setPower(0.9);
             } else {
                 verticalLift.setPower(0.0);
-                if (verticalLift.getCurrentPosition() >= 100) {
-                    verticalLift.setPower(0.05);
+                if ((gamepad2.left_trigger == 0 && gamepad1.left_trigger == 0) && (!gamepad1.b && !gamepad2.b) && verticalLift.getCurrentPosition() >= 100) {
+                    verticalLift.setPower(0.03);
                 } else {
                     verticalLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
                 }
             }
             //outtake7
-            if (verticalLift.getCurrentPosition() < 500 && rotater.getPosition() != intakePos) {
+            if (verticalLift.getCurrentPosition() < 400 && rotater.getPosition() != intakePos) {
                 rotater.setPosition(intakePos);
-            } else if (verticalLift.getCurrentPosition() >= 500 && rotater.getPosition() != outtakePos){
+            } else if (verticalLift.getCurrentPosition() >= 400 && rotater.getPosition() != outtakePos){
                 rotater.setPosition(outtakePos);
             }
 
-            if (gamepad1.x) {
+            if (gamepad1.x || gamepad2.x) {
                 claw.setPosition(closeClaw);
             }
-            else if (gamepad1.b) {
+            else if (gamepad1.b || gamepad2.b) {
                 claw.setPosition(openClaw);
             }
 
@@ -168,10 +182,10 @@ public class TeleOp extends OpMode {
             }
 
             //intake
-            if (gamepad1.right_bumper) {
+            if (gamepad1.right_bumper || gamepad2.right_bumper) {
                 intakeServo.setPower(1);
             }
-            else if (gamepad1.left_bumper) {
+            else if (gamepad1.left_bumper || gamepad2.left_bumper) {
                 intakeServo.setPower(-1);
             }
             else {
@@ -179,9 +193,9 @@ public class TeleOp extends OpMode {
             }
 
             //horizontalLift
-            if (gamepad1.dpad_up && horizontalLift.getCurrentPosition() <= 2100) {
+            if ((gamepad1.dpad_up && horizontalLift.getCurrentPosition() <= 2100) || (gamepad2.dpad_up && horizontalLift.getCurrentPosition() <= 2100)) {
                 horizontalLift.setPower(0.9);
-            } else if (gamepad1.dpad_down && horizontalLift.getCurrentPosition() > 0) {
+            } else if ((gamepad1.dpad_down && horizontalLift.getCurrentPosition() > 0) || (gamepad2.dpad_down && horizontalLift.getCurrentPosition() > 0)) {
                 horizontalLift.setPower(-0.9);
             } else {
                 horizontalLift.setPower(0);

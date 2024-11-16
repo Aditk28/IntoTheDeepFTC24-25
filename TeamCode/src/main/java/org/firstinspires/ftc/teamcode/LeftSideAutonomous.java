@@ -24,8 +24,8 @@ import com.qualcomm.robotcore.hardware.Servo;
 // Non-RR imports
 
 @Config
-@Autonomous(name = "BlueAutonRight", group = "Autonomous")
-public class BlueAutonRight extends LinearOpMode {
+@Autonomous(name = "Left-Side Autonomous", group = "Autonomous")
+public class LeftSideAutonomous extends LinearOpMode {
 
     public static class Intake{
         private DcMotorEx lift;
@@ -34,7 +34,7 @@ public class BlueAutonRight extends LinearOpMode {
         private CRServo intakeServo;
         final double out = 0;
         final double in = 1;
-     //   private Servo arm;
+        //   private Servo arm;
 
 
         public Intake(HardwareMap hardwareMap){
@@ -175,6 +175,30 @@ public class BlueAutonRight extends LinearOpMode {
             lift.setDirection(DcMotorSimple.Direction.REVERSE);
         }
 
+        public class PassivePower implements Action{
+
+            // checks if the lift motor has been powered on
+            private boolean initialized = false;
+            private double pow;
+            public PassivePower(double pow) {
+                this.pow = pow;
+            }
+
+            // actions are formatted via telemetry packets as below
+            @Override
+            public boolean run(@NonNull TelemetryPacket packet) {
+                lift.setPower(pow);
+                return false;
+            }
+        }
+
+        public Action passivePowerOn() {
+            return new PassivePower(.05);
+        }
+        public Action passivePowerOff() {
+            return new PassivePower(0);
+        }
+
         public class LiftUp implements Action {
             // checks if the lift motor has been powered on
             private boolean initialized = false;
@@ -261,16 +285,16 @@ public class BlueAutonRight extends LinearOpMode {
 
 
     public static class Claw {
-        private Servo Claw;
+        private Servo claw;
 
         public Claw(HardwareMap hardwareMap) {
-            Claw = hardwareMap.get(Servo.class, "claw");
+            claw = hardwareMap.get(Servo.class, "claw");
         }
 
         public class CloseClaw implements Action {
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
-                Claw.setPosition(0.5);
+                claw.setPosition(0.5);
                 return false;
             }
         }
@@ -281,7 +305,7 @@ public class BlueAutonRight extends LinearOpMode {
         public class OpenClaw implements Action {
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
-                Claw.setPosition(0);
+                claw.setPosition(0);
                 return false;
             }
         }
@@ -303,26 +327,17 @@ public class BlueAutonRight extends LinearOpMode {
 
         Outtake outtake = new Outtake(hardwareMap);
 
-
         TrajectoryActionBuilder goToSubmersible = drive.actionBuilder(initialPose)
-                .strafeToConstantHeading(new Vector2d(-25, -36));
-        TrajectoryActionBuilder pickUpBrick = goToSubmersible.fresh()
-                .strafeToLinearHeading(new Vector2d(-22,8),Math.toRadians(150));
-        TrajectoryActionBuilder dropBrick = pickUpBrick.fresh()
-                .strafeToLinearHeading(new Vector2d(-25,12),0);
-        TrajectoryActionBuilder pickUpBrick2 = dropBrick.fresh()
-                .strafeToLinearHeading(new Vector2d(-22,12),Math.toRadians(160));
-        TrajectoryActionBuilder dropBrick2 = pickUpBrick2.fresh()
-                .strafeToLinearHeading(new Vector2d(-25,12),0);
-        TrajectoryActionBuilder pickUpClip = dropBrick2.fresh()
-                .strafeToLinearHeading(new Vector2d(1, 1),Math.toRadians(180));
-        TrajectoryActionBuilder goToSubmersible2 = pickUpClip.fresh()
-                .strafeToConstantHeading(new Vector2d(-25, -36));
-        TrajectoryActionBuilder pickUpClip2 = goToSubmersible2.fresh()
-                .strafeToLinearHeading(new Vector2d(1, 1), Math.toRadians(180));
-        TrajectoryActionBuilder goToSubmersible3 = pickUpClip2.fresh()
-                .strafeToConstantHeading(new Vector2d(-25, -36));
-
+                .strafeToConstantHeading(new Vector2d(-27, 36))
+                .waitSeconds(.5);
+        TrajectoryActionBuilder goToParkSubmersible = goToSubmersible.fresh()
+                .strafeToConstantHeading(new Vector2d(-27, -3.25))
+                .waitSeconds(.5)
+                .strafeToConstantHeading(new Vector2d(-51, -3.25))
+                .waitSeconds(.5)
+                .strafeToLinearHeading(new Vector2d(-51, 0), Math.toRadians(90))
+                .waitSeconds(.5)
+                ;
 
         waitForStart();
         if (isStopRequested()) return;
@@ -332,62 +347,45 @@ public class BlueAutonRight extends LinearOpMode {
         Actions.runBlocking(
                 new SequentialAction(
                         new ParallelAction(
-                            goToSubmersible.build(),
-                            outtake.liftUp(2400)
+                                goToSubmersible.build(),
+                                new SequentialAction(
+                                        outtake.liftUp(2000),
+                                        outtake.passivePowerOn()
+                                )
                         ),
-                        outtake.liftDown(2000),
+                        new SleepAction(0.3),
+                        outtake.liftDown(1800),
+                        outtake.passivePowerOff(),
+                        new SleepAction(.3),
                         claw.openClaw(),
+                        new SleepAction(0.5),
                         new ParallelAction(
-                            outtake.liftDown(),
-                            intake.liftOut(1000),
-                            intake.moveArmOut(),
-                            intake.startIntaking(),
-                            pickUpBrick.build()
-                        ),
-                        new SleepAction(2),
-                        intake.stopIntake(),
-                        dropBrick.build(),
-                        intake.startOuttaking(),
-                        new SleepAction(1),
-                        intake.stopIntake(),
-                        pickUpBrick2.build(),
-                        intake.startIntaking(),
-                        new SleepAction(2),
-                        intake.stopIntake(),
-                        dropBrick2.build(),
-                        intake.startOuttaking(),
-                        new SleepAction(2),
-                        intake.stopIntake(),
-                        new ParallelAction(
-                                pickUpClip.build(),
-                                intake.moveArmIn(),
-                                intake.liftIn(50),
-                                outtake.liftUp(500)
-                        ),
-                        new SleepAction(2),
-                        claw.closeClaw(),
-                        new SleepAction(1),
-                        new ParallelAction(
-                                goToSubmersible2.build(),
-                                outtake.liftUp(2400)
-                        ),
-                        outtake.liftDown(2000),
-                        claw.openClaw(),
-                        new ParallelAction(
-                                pickUpClip2.build(),
-                                outtake.liftDown(460)
-                        ),
-                        new SleepAction(2),
-                        claw.closeClaw(),
-                        new SleepAction(1),
-                        new ParallelAction(
-                                goToSubmersible3.build(),
-                                outtake.liftUp(2400)
-                        ),
-                        outtake.liftDown(2000),
-                        claw.openClaw()
+                                new ParallelAction(
+                                        outtake.liftDown(0),
+                                        claw.openClaw()
+                                ),
+                                goToParkSubmersible.build()
+                        )
 
-        ));
+//                        new ParallelAction(
+//                                pickUpClip2.build(),
+//                                outtake.liftDown(450)
+//                        ),
+//                        new SleepAction(1),
+//                        claw.closeClaw(),
+//                        new SleepAction(1),
+//                        new ParallelAction(
+//                                goToSubmersible3.build(),
+//                                new SequentialAction(
+//                                        outtake.liftUp(2000),
+//                                        outtake.passivePowerOn()
+//                                )
+//                        ),
+//                        new SleepAction(0.5),
+//                        outtake.liftDown(1800),
+//                        claw.openClaw()
+
+                ));
     }
 
 }
