@@ -7,8 +7,10 @@ import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.PoseVelocity2d;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import java.util.ArrayList;
@@ -25,6 +27,10 @@ public class TeleOp extends OpMode {
     public DcMotorEx leftVerticalLift;
     public DcMotorEx rightVerticalLift;
 
+    public AnalogInput rightArmInput;
+    public Servo rightArm;
+    public Servo armClaw;
+
 
     //Reduces speed when true
     public boolean turtleMode = false;
@@ -36,6 +42,12 @@ public class TeleOp extends OpMode {
     public double rotationSpeed = 1;
     public boolean fieldOriented = false;
 
+    public double armTransferPos = .97;
+    public double armWallPos = .4;
+    public double armOuttakePos = .85;
+    public double armClawClose = 1;
+    public double armClawOpen = 0.7;
+
     private MecanumDrive drive;
 
     private boolean removeBounds = false;
@@ -43,6 +55,10 @@ public class TeleOp extends OpMode {
     private List<Action> runningActions = new ArrayList<>();
 
     private boolean runnable = true;
+
+    public double getArmPos() {
+        return rightArmInput.getVoltage() / 3.3;
+    }
     @Override
     public void init() {
         telemetry.addData("Status", "Robot is Initialized");
@@ -55,6 +71,9 @@ public class TeleOp extends OpMode {
         leftVerticalLift = hardwareMap.get(DcMotorEx.class, "leftVerticalLift");
         rightVerticalLift = hardwareMap.get(DcMotorEx.class, "rightVerticalLift");
         horizontalLift = hardwareMap.get(DcMotorEx.class, "horizontalLift");
+        rightArm = hardwareMap.get(Servo.class, "rightArm");
+        rightArmInput = hardwareMap.get(AnalogInput.class, "rightArmInput");
+        armClaw = hardwareMap.get(Servo.class, "armClaw");
 
         leftVerticalLift.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         rightVerticalLift.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
@@ -99,14 +118,33 @@ public class TeleOp extends OpMode {
 
 
         if (runnable) {
+            //armClaw
+            if (gamepad2.left_bumper) {
+                armClaw.setPosition(armClawOpen);
+            }
+            else if (gamepad2.right_bumper) {
+                armClaw.setPosition(armClawClose);
+            }
+
+            //arm
+            if (gamepad2.right_stick_y < -.85) {
+                rightArm.setPosition(armOuttakePos);
+            }
+            else if (gamepad2.right_stick_x > .85) {
+                rightArm.setPosition(armWallPos);
+            }
+            else if (gamepad2.right_stick_x < -.85) {
+                rightArm.setPosition(armTransferPos);
+            }
+
             //bounds
             if (gamepad2.dpad_right) removeBounds = true;
             if (gamepad2.dpad_left) removeBounds = false;
 
 
             //verticalLift
-            if ( ((gamepad1.left_trigger != 0 && rightVerticalLift.getCurrentPosition() >= 0) || (gamepad1.left_trigger != 0 && removeBounds)) ||
-            ((gamepad2.left_trigger != 0 && rightVerticalLift.getCurrentPosition() >= 0) || (gamepad2.left_trigger != 0 && removeBounds)) ){
+            if ( ((gamepad1.left_trigger != 0 && rightVerticalLift.getCurrentPosition() <= 0) || (gamepad1.left_trigger != 0 && removeBounds)) ||
+            ((gamepad2.left_trigger != 0 && rightVerticalLift.getCurrentPosition() <= 0) || (gamepad2.left_trigger != 0 && removeBounds)) ){
                 rightVerticalLift.setPower(0.9);
                 leftVerticalLift.setPower(-.9);
             } else if (((gamepad1.right_trigger != 0 && rightVerticalLift.getCurrentPosition() <= 4200) || (gamepad1.right_trigger != 0 && removeBounds)) ||
@@ -158,6 +196,8 @@ public class TeleOp extends OpMode {
         telemetry.addData("rightLiftMotorPosition", rightVerticalLift.getCurrentPosition());
         telemetry.addData("leftLiftMotorPosition", leftVerticalLift.getCurrentPosition());
         telemetry.addData("horizontalliftMotorPosition", horizontalLift.getCurrentPosition());
+        telemetry.addData("rightArmServoPos", getArmPos());
+        telemetry.addData("armClawPos", armClaw.getPosition());
 
 
 // ANKARA MESSI
