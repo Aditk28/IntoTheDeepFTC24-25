@@ -22,17 +22,17 @@ public class ActionClass {
         public static final double intakeGrabPos = 0.15;
         public static final double intakeMovePos = 0.3;
         public static final double intakeTransferPos = 0.7;
-        public static final double grabPos = .5;
-        public static final double openPos = .7;
-        public static final double rotaterDefault = 0;
-        public static final double rotaterTurned = 0.6;
+        public static final double grabPos = .7;
+        public static final double openPos = .5;
+        public static final double rotaterDefault = .2;
+        public static final double rotaterTurned = 0.52;
 
 
         public Intake(HardwareMap hardwareMap){
             lift = hardwareMap.get(DcMotorEx.class, "horizontalLift");
             armClaw = hardwareMap.get(Servo.class, "armClaw");
             rotater = hardwareMap.get(Servo.class, "rotater");
-            rightIntakeArm = hardwareMap.get(Servo.class, "rightIntakeArm");
+            rightIntakeArm = hardwareMap.get(Servo.class, "intakeArm");
             leftIntakeArm = hardwareMap.get(Servo.class, "leftIntakeArm");
             intakeClaw = hardwareMap.get(Servo.class, "intakeClaw");
         }
@@ -182,8 +182,8 @@ public class ActionClass {
 
         public static final double grabPos = 1;
         public static final double openPos = 0.7;
-        public static final double armTransferPos = .85;
-        public static final double armOuttakePos = .7;
+        public static final double armTransferPos = .89;
+        public static final double armOuttakePos = .75;
         public static final double armOuttakePos2 = .5;
 
         public Outtake(HardwareMap hardwareMap){
