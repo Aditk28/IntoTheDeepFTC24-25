@@ -77,8 +77,8 @@ public class TeleOp extends OpMode {
         right joystick -> turn robot
         left trigger -> vertical lift down
         right trigger -> vertical lift up
-        left bumper -> horizontal lift retract
-        right bumper -> horizontal lift extend
+        left bumper -> rotate claw
+        right bumper -> rotate claw
         y -> outtake claw close
         a -> outtake claw open
         x -> intake claw close
@@ -253,6 +253,20 @@ public class TeleOp extends OpMode {
                 armClaw.setPosition(armClawClose);
             }
 
+            //rotater
+            if (gamepad1.right_bumper && rotater.getPosition() < .6) {
+                runningActions.add(new SequentialAction(
+                        intake.rotaterPos((rotater.getPosition() + .1)),
+                        new SleepAction(.1)
+                ));
+            }
+            if (gamepad1.left_bumper && rotater.getPosition() > .2) {
+                runningActions.add(new SequentialAction(
+                        intake.rotaterPos((rotater.getPosition() - .1)),
+                        new SleepAction(.1)
+                ));
+            }
+
             //arm
             if (gamepad2.right_stick_y < -.85) {
                 rightArm.setPosition(armOuttakePos);
@@ -308,9 +322,9 @@ public class TeleOp extends OpMode {
             }
 
             //horizontalLift
-            if ((gamepad1.right_bumper && horizontalLift.getCurrentPosition() <= 2100) || (gamepad2.right_bumper && horizontalLift.getCurrentPosition() <= 2100)) {
+            if ((gamepad2.right_bumper && horizontalLift.getCurrentPosition() <= 2100)) {
                 horizontalLift.setPower(0.9);
-            } else if ((gamepad1.left_bumper && horizontalLift.getCurrentPosition() > 0) || (gamepad2.left_bumper && horizontalLift.getCurrentPosition() > 0)) {
+            } else if ( (gamepad2.left_bumper && horizontalLift.getCurrentPosition() > 0)) {
                 horizontalLift.setPower(-0.9);
             } else {
                 horizontalLift.setPower(0);
@@ -331,8 +345,8 @@ public class TeleOp extends OpMode {
 
         //movement
         drive.setDrivePowers(
-                new PoseVelocity2d(new Vector2d(gamepad1.left_stick_y * robotSpeed,
-                        gamepad1.left_stick_x * robotSpeed),
+                new PoseVelocity2d(new Vector2d(-gamepad1.left_stick_y * robotSpeed,
+                        -gamepad1.left_stick_x * robotSpeed),
                         -gamepad1.right_stick_x * robotSpeed * rotationSpeed
                 )
         );

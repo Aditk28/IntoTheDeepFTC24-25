@@ -1,6 +1,13 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.roadrunner.ParallelAction;
+import com.acmerobotics.roadrunner.Pose2d;
+import com.acmerobotics.roadrunner.SequentialAction;
+import com.acmerobotics.roadrunner.SleepAction;
+import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
+import com.acmerobotics.roadrunner.Vector2d;
+import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
@@ -10,124 +17,102 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 @Config
 @Autonomous(name = "Right-Side Autonomous", group = "Autonomous")
 public class RightSideAutonomous extends LinearOpMode {
+
+
     @Override
     public void runOpMode() throws InterruptedException {
         // instantiate your MecanumDrive at a particular pose.
-//        Pose2d initialPose = new Pose2d(0, -24, 0);
-//        MecanumDrive drive = new MecanumDrive(hardwareMap, initialPose);
-//        // make a Claw instance
-//        Claw claw = new Claw(hardwareMap);
-//        // make a Lift instance
-//        Intake intake = new Intake(hardwareMap);
-//
-//        Outtake outtake = new Outtake(hardwareMap);
-//
-//        TrajectoryActionBuilder goToSubmersible = drive.actionBuilder(initialPose)
-//                .strafeToConstantHeading(new Vector2d(-29, -24))
-//                .waitSeconds(.5);
-//        TrajectoryActionBuilder pushBricks = goToSubmersible.fresh()
-//                .strafeToConstantHeading(new Vector2d(-22,2))
-////                .waitSeconds(.5)
-//                .strafeToConstantHeading(new Vector2d(-52, 2))
-////                .waitSeconds(.5)
-//                .turn(Math.toRadians(187))
-////                .waitSeconds(.5)
-//                .strafeToConstantHeading(new Vector2d(-52, 15))
-////                .waitSeconds(.5)
-//                .strafeToConstantHeading(new Vector2d(-5, 15))
-////                .waitSeconds(.5)
-//                .strafeToConstantHeading(new Vector2d(-52, 15))
-////                .waitSeconds(.5)
-//                .strafeToConstantHeading(new Vector2d(-52, 25))
-////                .waitSeconds(.5)
-//                .strafeToConstantHeading(new Vector2d(-5, 25))
-//                .strafeToConstantHeading(new Vector2d(-15, 15))
-//                .strafeToConstantHeading(new Vector2d(-.2, 15))
-////        TrajectoryActionBuilder pickUpClip = pushBricks.fresh()
-//                .waitSeconds(.2);
-//        TrajectoryActionBuilder goToSubmersible2 = pushBricks.fresh()
-//                .strafeToLinearHeading(new Vector2d(-30, -30), Math.toRadians(6))
-//                .waitSeconds(.5);
-//        TrajectoryActionBuilder pickUpClip2 = goToSubmersible2.fresh()
-//                .strafeToLinearHeading(new Vector2d(-2, 1), Math.toRadians(180))
-//                .waitSeconds(.5);
-//        TrajectoryActionBuilder goToSubmersible3 = pickUpClip2.fresh()
-//                .strafeToLinearHeading(new Vector2d(-26.5, -36), 0)
-//                .waitSeconds(.5);
-//        TrajectoryActionBuilder goToParkSubmersible = goToSubmersible3.fresh()
-//                .strafeToConstantHeading(new Vector2d(0, 0))
-//                .waitSeconds(.5)
-//                ;
-//
-//                waitForStart();
-//        if (isStopRequested()) return;
-//        Servo rotater = rotater = hardwareMap.get(Servo.class, "rotater");
-//        rotater.setPosition(.5);
-//
-//        Actions.runBlocking(
-//                new SequentialAction(
-//                        new ParallelAction(
-//                            new SequentialAction(
-//                                    new SleepAction(.7),
-//                                    goToSubmersible.build()
-//                            ),
-//                            new SequentialAction(
-//                                    outtake.liftUp(2050),
-//                                    outtake.passivePowerOn()
-//                            )
-//                        ),
-//                        new SleepAction(0.1),
-//                        outtake.liftDown(1890),
-//                        outtake.passivePowerOff(),
-//                        new SleepAction(.2),
-//                        claw.openClaw(),
-//                        new SleepAction(0.2),
-//
-//                        new ParallelAction(
-//                                new SequentialAction(
-//                                        outtake.liftDown(430),
-//                                        outtake.passivePowerOn()
-//                                ),
-//                                pushBricks.build()
-//                        ),
-//                        new SleepAction(.5),
-//                        claw.closeClaw(),
-//                        outtake.passivePowerOff(),
-//                        new SleepAction(.5),
-//                        new ParallelAction(
-//                                goToSubmersible2.build(),
-//                                new SequentialAction(
-//                                        outtake.liftUp(2200),
-//                                        outtake.passivePowerOn()
-//                                 )
-//                        ),
-//                        new SleepAction(0.5),
-//
-//                        outtake.liftDown(1900),
-//                        outtake.passivePowerOff(),
-//                        new SleepAction(.1),
-//                        claw.openClaw(),
-//                        outtake.liftDown(0)
+        Pose2d initialPose = new Pose2d(0, 0, 0);
+        MecanumDrive drive = new MecanumDrive(hardwareMap, initialPose);
+        ActionClass.Intake intake = new ActionClass.Intake(hardwareMap);
+        ActionClass.Outtake outtake = new ActionClass.Outtake(hardwareMap);
+        Actions.runBlocking(outtake.closeClaw());
 
-//                        new ParallelAction(
-//                                pickUpClip2.build(),
-//                                outtake.liftDown(450)
-//                        ),
-//                        new SleepAction(1),
-//                        claw.closeClaw(),
-//                        new SleepAction(1),
-//                        new ParallelAction(
-//                                goToSubmersible3.build(),
-//                                new SequentialAction(
-//                                        outtake.liftUp(2000),
-//                                        outtake.passivePowerOn()
-//                                )
-//                        ),
-//                        new SleepAction(0.5),
-//                        outtake.liftDown(1800),
-//                        claw.openClaw()
+        TrajectoryActionBuilder auto = drive.actionBuilder(initialPose)
+                //goToSubmersible
+                .strafeToConstantHeading(new Vector2d(-24, 0))
 
-//        ));
+                //move lift up and arm to outtake position while going there
+                .afterTime(0, new ParallelAction(
+                        outtake.armOuttakePos2(),
+                        new SequentialAction(
+                                outtake.liftUp(200)
+//                                outtake.passivePowerOn()
+                        )
+                ))
+
+                //after reaching, move lift down and open the claw
+                .afterDisp(-24, new SequentialAction(
+                        outtake.liftDown(50),
+                        outtake.openClaw()
+                ))
+                .waitSeconds(2)
+
+                //reset
+                .strafeToConstantHeading(new Vector2d(-5, 32))
+                //bring back first brick
+                .strafeToConstantHeading(new Vector2d(-52, 32))
+                .strafeToConstantHeading(new Vector2d(-52, 36))
+                .strafeToConstantHeading(new Vector2d(-2, 36))
+
+                //bring back second brick
+                .strafeToConstantHeading(new Vector2d(-52, 36))
+                .strafeToConstantHeading(new Vector2d(-52, 40))
+                .strafeToConstantHeading(new Vector2d(-2, 40))
+
+                //reset while moving arm to the transfer position
+                .strafeToConstantHeading(new Vector2d(-10, 32))
+                .afterTime(0, outtake.armTransferPos())
+
+                //go to pickup the specimen
+                .strafeToConstantHeading(new Vector2d(-2, 32))
+
+                //after reaching, close the claw, then move the arm to the outtake position
+                .afterDisp(-8, new SequentialAction(
+                        outtake.closeClaw(),
+                        new SleepAction(.5),
+                        outtake.armOuttakePos2()
+                ))
+                .waitSeconds(1)
+
+                //go to submersible with the picked up specimen
+                .strafeToConstantHeading(new Vector2d(-24, 2))
+
+                //move the lift up (backwards outtake) then open the claw, then move the arm back to transfer position and the lift back down
+                .afterTime(3, new SequentialAction(
+                        outtake.liftUp(200),
+                        outtake.openClaw(),
+                        new SleepAction(.2),
+                        outtake.armTransferPos(),
+                        outtake.liftDown(50)
+                ))
+
+                //go to pick up the second clip
+                .strafeToConstantHeading(new Vector2d(-2, 32))
+
+                //after reaching, close the claw and move the arm to the outtake position
+                .afterTime(3, new SequentialAction(
+                        outtake.closeClaw(),
+                        new SleepAction(.5),
+                        outtake.armOuttakePos2()
+                ))
+                .waitSeconds(1)
+
+                //go to submersible
+                .strafeToConstantHeading(new Vector2d(-24, 2))
+
+                //after reaching, move the lift up, open the claw, and then move lift back down, then also extend the intake
+                .afterTime(3, new SequentialAction(
+                        outtake.liftUp(200),
+                        outtake.openClaw(),
+                        outtake.liftDown(50),
+                        intake.armMovePos()
+                ));
+
+        waitForStart();
+        if (isStopRequested()) return;
+        Actions.runBlocking(
+                auto.build());
     }
 
 }

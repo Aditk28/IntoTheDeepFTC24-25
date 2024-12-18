@@ -64,10 +64,11 @@ public class ActionClass {
             }
             @Override
             public boolean run(@NonNull TelemetryPacket packet){
-                intakeClaw.setPosition(pos);
+                rotater.setPosition(pos);
                 return false;
             }
         }
+        public Action rotaterPos(double pos) { return new Rotater(pos); }
         public Action defaultRotater() {
             return new Rotater(rotaterDefault);
         }
@@ -182,9 +183,9 @@ public class ActionClass {
 
         public static final double grabPos = 1;
         public static final double openPos = 0.7;
-        public static final double armTransferPos = .89;
+        public static final double armTransferPos = .93;
         public static final double armOuttakePos = .75;
-        public static final double armOuttakePos2 = .5;
+        public static final double armOuttakePos2 = .45;
 
         public Outtake(HardwareMap hardwareMap){
             leftVerticalLift = hardwareMap.get(DcMotorEx.class, "leftVerticalLift");
@@ -230,7 +231,7 @@ public class ActionClass {
         }
 
         public Action passivePowerOn() {
-            return new PassivePower(.05);
+            return new PassivePower(.02);
         }
         public Action passivePowerOff() {
             return new PassivePower(0);
