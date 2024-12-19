@@ -181,10 +181,10 @@ public class ActionClass {
         private Servo claw;
         private Servo rightArm;
 
-        public static final double grabPos = 1;
-        public static final double openPos = 0.7;
+        public static final double grabPos = .18;
+        public static final double openPos = .14;
         public static final double armTransferPos = .93;
-        public static final double armOuttakePos = .75;
+        public static final double armOuttakePos = .83;
         public static final double armOuttakePos2 = .45;
 
         public Outtake(HardwareMap hardwareMap){
