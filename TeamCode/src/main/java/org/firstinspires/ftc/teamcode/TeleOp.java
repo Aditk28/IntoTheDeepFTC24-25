@@ -53,6 +53,7 @@ public class TeleOp extends OpMode {
     public double armTransferPos = ActionClass.Outtake.armTransferPos;
     public double armOuttakePos = ActionClass.Outtake.armOuttakePos;
     public double armOuttakePos2 = ActionClass.Outtake.armOuttakePos2;
+    public double armWallPos = ActionClass.Outtake.armWallPos;
 
     public double armClawClose = ActionClass.Outtake.grabPos;
     public double armClawOpen = ActionClass.Outtake.openPos;
@@ -205,7 +206,7 @@ public class TeleOp extends OpMode {
                                 outtake.liftDown(50),
                                 outtake.openClaw(),
                                 intake.armMovePos(),
-                                intake.liftOut(1150)
+                                intake.liftOut(400)
                         ),
                         new ParallelAction(
                                 intake.armTransferPos(),
@@ -270,9 +271,14 @@ public class TeleOp extends OpMode {
             //arm
             if (gamepad2.right_stick_y < -.85) {
                 rightArm.setPosition(armOuttakePos);
+                intakeArm.setPosition(intakeMovePosRight);
             }
             else if (gamepad2.right_stick_x > .85) {
                 rightArm.setPosition(armOuttakePos2);
+            }
+            else if (gamepad2.right_stick_y > .85) {
+                rightArm.setPosition(armWallPos);
+                intakeArm.setPosition(intakeGrabPosRight);
             }
             else if (gamepad2.right_stick_x < -.85) {
                 rightArm.setPosition(armTransferPos);
@@ -291,7 +297,7 @@ public class TeleOp extends OpMode {
             //intakeArm
             if (intakeArm.getPosition() != intakeTransferPosRight && gamepad2.left_stick_x > .85) {
                 intakeArm.setPosition(intakeTransferPosRight);
-                rotater.setPosition(rotaterTurned);
+                rotater.setPosition(rotaterDefault);
             }
             else if (intakeArm.getPosition() != intakeMovePosRight && gamepad2.left_stick_y < -.85) {
                 intakeArm.setPosition(intakeMovePosRight);
@@ -299,7 +305,6 @@ public class TeleOp extends OpMode {
             }
             else if (intakeArm.getPosition() != intakeGrabPosRight && gamepad2.left_stick_x < -.85) {
                 intakeArm.setPosition(intakeGrabPosRight);
-                rotater.setPosition(rotaterDefault);
             }
 
             //verticalLift

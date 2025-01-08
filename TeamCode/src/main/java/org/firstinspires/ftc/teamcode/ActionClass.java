@@ -183,9 +183,11 @@ public class ActionClass {
 
         public static final double grabPos = .18;
         public static final double openPos = .14;
-        public static final double armTransferPos = .93;
+        public static final double armTransferPos = .9;
         public static final double armOuttakePos = .83;
         public static final double armOuttakePos2 = .45;
+        public static final double armWallPosBack = .25;
+        public static final double armWallPos = .93;
 
         public Outtake(HardwareMap hardwareMap){
             leftVerticalLift = hardwareMap.get(DcMotorEx.class, "leftVerticalLift");
@@ -211,6 +213,8 @@ public class ActionClass {
         public Action armTransferPos() { return moveArm(armTransferPos); }
         public Action armOuttakePos() { return moveArm(armOuttakePos); }
         public Action armOuttakePos2() { return moveArm(armOuttakePos2); }
+        public Action armWallPosBack() { return moveArm(armWallPosBack); }
+        public Action armWallPos() { return moveArm(armWallPos); }
 
         public class PassivePower implements Action{
 
