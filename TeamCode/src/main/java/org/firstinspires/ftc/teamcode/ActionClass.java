@@ -23,7 +23,7 @@ public class ActionClass {
         public static final double intakeMovePos = 0.3;
         public static final double intakeTransferPos = 0.7;
         public static final double grabPos = .7;
-        public static final double openPos = .5;
+        public static final double openPos = .38;
         public static final double rotaterDefault = .2;
         public static final double rotaterTurned = 0.52;
 
@@ -180,14 +180,18 @@ public class ActionClass {
         private DcMotorEx rightVerticalLift;
         private Servo claw;
         private Servo rightArm;
+        private Servo outtakeRotater;
 
-        public static final double grabPos = .18;
-        public static final double openPos = .14;
+        public static final double grabPos = .37;
+        public static final double openPos = .31;
         public static final double armTransferPos = .9;
-        public static final double armOuttakePos = .83;
+        public static final double armOuttakePos = .78;
         public static final double armOuttakePos2 = .45;
         public static final double armWallPosBack = .25;
         public static final double armWallPos = .93;
+        public static final double outtakeRotaterPickup = .7;
+        public static final double outtakeRotaterOuttake = .3;
+
 
         public Outtake(HardwareMap hardwareMap){
             leftVerticalLift = hardwareMap.get(DcMotorEx.class, "leftVerticalLift");
@@ -198,23 +202,32 @@ public class ActionClass {
 
         public class MoveArm implements Action {
             private double pos;
-            public MoveArm(double pos) {
+            private double rotaterPos;
+            public MoveArm(double pos, double rotaterPos) {
                 this.pos = pos;
+                this.rotaterPos = rotaterPos;
             }
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
                 rightArm.setPosition(pos);
+                outtakeRotater.setPosition(rotaterPos);
                 return false;
             }
         }
+
         public Action moveArm(double pos) {
-            return new MoveArm(pos);
+            return new MoveArm(pos, outtakeRotater.getPosition());
+        }
+        public Action moveArm(double pos, double rotaterPos) {
+            return new MoveArm(pos, rotaterPos);
         }
         public Action armTransferPos() { return moveArm(armTransferPos); }
-        public Action armOuttakePos() { return moveArm(armOuttakePos); }
-        public Action armOuttakePos2() { return moveArm(armOuttakePos2); }
-        public Action armWallPosBack() { return moveArm(armWallPosBack); }
-        public Action armWallPos() { return moveArm(armWallPos); }
+        public Action armOuttakePos() { return moveArm(armOuttakePos, outtakeRotaterOuttake); }
+        public Action armOuttakePos2() { return moveArm(armOuttakePos2, outtakeRotaterOuttake); }
+        public Action armWallPosBack() { return moveArm(armWallPosBack, outtakeRotaterPickup); }
+        public Action armWallPos() {
+            return moveArm(armWallPos);
+        }
 
         public class PassivePower implements Action{
 

@@ -34,7 +34,7 @@ public class RightSideAutonomous extends LinearOpMode {
                 .afterTime(0, new ParallelAction(
                         outtake.armOuttakePos(),
                         new SequentialAction(
-                                outtake.liftUp(920)
+                                outtake.liftUp(475)
                                 //does NOT use passive power, might need to add depending on testing
                         )
                 ))
@@ -59,9 +59,9 @@ public class RightSideAutonomous extends LinearOpMode {
 //                .splineToLinearHeading(new Pose2d(10, -28, Math.toRadians(8)), Math.toRadians(90))
 
                 //bring back first brick
-                .strafeToConstantHeading(new Vector2d(56, -28))
-                .strafeToConstantHeading(new Vector2d(56, -35))
-                .strafeToConstantHeading(new Vector2d(6, -35))
+                .splineToConstantHeading(new Vector2d(56, -28), 0)
+                .splineToConstantHeading(new Vector2d(56, -35), 0)
+                .splineToConstantHeading(new Vector2d(6, -35), 0)
 
                 //bring back second brick
                 .strafeToConstantHeading(new Vector2d(56, -38.75))
@@ -83,8 +83,8 @@ public class RightSideAutonomous extends LinearOpMode {
                 .afterTime(0, new SequentialAction(
                         outtake.closeClaw(),
                         new SleepAction(.4),
-//                        outtake.armOuttakePos(),
-                        outtake.moveArm(.86),
+                        outtake.armOuttakePos(),
+//                        outtake.moveArm(.86),
                         outtake.liftUp(1650)
                 ))
                 .waitSeconds(.5)

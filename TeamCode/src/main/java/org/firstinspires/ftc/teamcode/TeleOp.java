@@ -35,6 +35,11 @@ public class TeleOp extends OpMode {
     public Servo intakeClaw;
     public Servo armClaw;
 
+    public Servo outtakeRotater;
+    public Servo rightSusServo;
+
+    public Servo leftSusServo;
+
     //declaring action mechanisms
     public ActionClass.Intake intake;
     public ActionClass.Outtake outtake;
@@ -65,7 +70,8 @@ public class TeleOp extends OpMode {
     public double rotaterDefault = ActionClass.Intake.rotaterDefault;
     public double rotaterTurned = ActionClass.Intake.rotaterTurned;
 
-    //Drive Object
+    public double outtakeRotaterPickup = ActionClass.Outtake.outtakeRotaterPickup;
+    public double outtakeRotaterOuttake = ActionClass.Outtake.outtakeRotaterOuttake;
     private MecanumDrive drive;
     private FtcDashboard dash = FtcDashboard.getInstance();
     private List<Action> runningActions = new ArrayList<>();
@@ -126,8 +132,11 @@ public class TeleOp extends OpMode {
         rightArm = hardwareMap.get(Servo.class, "rightArm");
         armClaw = hardwareMap.get(Servo.class, "armClaw");
         rotater = hardwareMap.get(Servo.class, "rotater");
+        outtakeRotater = hardwareMap.get(Servo.class, "outtakeRotater");
         intakeArm = hardwareMap.get(Servo.class, "intakeArm");
         intakeClaw = hardwareMap.get(Servo.class, "intakeClaw");
+        rightSusServo = hardwareMap.get(Servo.class, "rightSusServo");
+        leftSusServo = hardwareMap.get(Servo.class, "leftSusServo");
         intake = new ActionClass.Intake(hardwareMap);
         outtake = new ActionClass.Outtake(hardwareMap);
 
@@ -222,7 +231,7 @@ public class TeleOp extends OpMode {
             }
 
             //AUTOMATIC GROUND OUTTAKE WHILE WALL INTAKE
-            if (gamepad1.dpad_down || gamepad2.dpad_down) {
+            if (gamepad2.dpad_down) {
                 runningActions.add(new SequentialAction(
                         new ParallelAction(
                                 outtake.armTransferPos(),
@@ -235,7 +244,7 @@ public class TeleOp extends OpMode {
             }
 
             //AUTOMATIC CLIP OUTTAKE
-            if (gamepad1.dpad_up || gamepad2.dpad_up) {
+            if (gamepad2.dpad_up) {
                 runningActions.add(new SequentialAction(
                         outtake.armOuttakePos(),
                         new SleepAction(1.5),
@@ -268,19 +277,35 @@ public class TeleOp extends OpMode {
                 ));
             }
 
+            //suspension
+            if (gamepad1.dpad_up){
+                rightSusServo.setPosition(0);
+                leftSusServo.setPosition(1);
+            }
+            if (gamepad1.dpad_down){
+                rightSusServo.setPosition(.5);
+                leftSusServo.setPosition(.15);
+            }
+
+
+
             //arm
             if (gamepad2.right_stick_y < -.85) {
+                outtakeRotater.setPosition(outtakeRotaterPickup);
                 rightArm.setPosition(armOuttakePos);
                 intakeArm.setPosition(intakeMovePosRight);
             }
             else if (gamepad2.right_stick_x > .85) {
+                outtakeRotater.setPosition(outtakeRotaterOuttake);
                 rightArm.setPosition(armOuttakePos2);
             }
             else if (gamepad2.right_stick_y > .85) {
+                outtakeRotater.setPosition(outtakeRotaterPickup);
                 rightArm.setPosition(armWallPos);
                 intakeArm.setPosition(intakeGrabPosRight);
             }
             else if (gamepad2.right_stick_x < -.85) {
+                outtakeRotater.setPosition(outtakeRotaterPickup);
                 rightArm.setPosition(armTransferPos);
             }
 
