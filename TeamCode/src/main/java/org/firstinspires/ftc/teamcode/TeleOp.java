@@ -59,7 +59,7 @@ public class TeleOp extends OpMode {
     public double armOuttakePos = ActionClass.Outtake.armOuttakePos;
     public double armOuttakePos2 = ActionClass.Outtake.armOuttakePos2;
     public double armWallPos = ActionClass.Outtake.armWallPos;
-
+    public double armWallPosBack = ActionClass.Outtake.armWallPosBack;
     public double armClawClose = ActionClass.Outtake.grabPos;
     public double armClawOpen = ActionClass.Outtake.openPos;
     public double intakeGrabPosRight = ActionClass.Intake.intakeGrabPos;
@@ -291,21 +291,21 @@ public class TeleOp extends OpMode {
 
             //arm
             if (gamepad2.right_stick_y < -.85) {
-                outtakeRotater.setPosition(outtakeRotaterPickup);
+                outtakeRotater.setPosition(outtakeRotaterOuttake);
                 rightArm.setPosition(armOuttakePos);
-                intakeArm.setPosition(intakeMovePosRight);
+//                intakeArm.setPosition(intakeMovePosRight);
             }
             else if (gamepad2.right_stick_x > .85) {
-                outtakeRotater.setPosition(outtakeRotaterOuttake);
+                outtakeRotater.setPosition(outtakeRotaterPickup);
                 rightArm.setPosition(armOuttakePos2);
             }
             else if (gamepad2.right_stick_y > .85) {
                 outtakeRotater.setPosition(outtakeRotaterPickup);
-                rightArm.setPosition(armWallPos);
-                intakeArm.setPosition(intakeGrabPosRight);
+                rightArm.setPosition(armWallPosBack);
+//                intakeArm.setPosition(intakeGrabPosRight);
             }
             else if (gamepad2.right_stick_x < -.85) {
-                outtakeRotater.setPosition(outtakeRotaterPickup);
+                outtakeRotater.setPosition(outtakeRotaterOuttake);
                 rightArm.setPosition(armTransferPos);
             }
 

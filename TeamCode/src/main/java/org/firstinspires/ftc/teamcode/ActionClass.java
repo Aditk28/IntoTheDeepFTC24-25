@@ -15,7 +15,7 @@ public class ActionClass {
         private DcMotorEx lift;
         private Servo rotater;
         private Servo rightIntakeArm;
-        private Servo leftIntakeArm;
+//        private Servo leftIntakeArm;
         private Servo intakeClaw;
         private Servo armClaw;
 
@@ -33,7 +33,7 @@ public class ActionClass {
             armClaw = hardwareMap.get(Servo.class, "armClaw");
             rotater = hardwareMap.get(Servo.class, "rotater");
             rightIntakeArm = hardwareMap.get(Servo.class, "intakeArm");
-            leftIntakeArm = hardwareMap.get(Servo.class, "leftIntakeArm");
+//            leftIntakeArm = hardwareMap.get(Servo.class, "leftIntakeArm");
             intakeClaw = hardwareMap.get(Servo.class, "intakeClaw");
         }
 
@@ -182,15 +182,15 @@ public class ActionClass {
         private Servo rightArm;
         private Servo outtakeRotater;
 
-        public static final double grabPos = .37;
+        public static final double grabPos = .39;
         public static final double openPos = .31;
         public static final double armTransferPos = .9;
         public static final double armOuttakePos = .78;
         public static final double armOuttakePos2 = .45;
         public static final double armWallPosBack = .25;
         public static final double armWallPos = .93;
-        public static final double outtakeRotaterPickup = .7;
-        public static final double outtakeRotaterOuttake = .3;
+        public static final double outtakeRotaterPickup = .15;
+        public static final double outtakeRotaterOuttake = .74;
 
 
         public Outtake(HardwareMap hardwareMap){
@@ -198,6 +198,7 @@ public class ActionClass {
             rightVerticalLift = hardwareMap.get(DcMotorEx.class, "rightVerticalLift");
             claw = hardwareMap.get(Servo.class, "armClaw");
             rightArm = hardwareMap.get(Servo.class, "rightArm");
+            outtakeRotater = hardwareMap.get(Servo.class, "outtakeRotater");
         }
 
         public class MoveArm implements Action {
