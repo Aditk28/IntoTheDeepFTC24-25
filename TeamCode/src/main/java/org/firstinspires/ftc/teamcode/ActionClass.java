@@ -183,11 +183,12 @@ public class ActionClass {
         private Servo outtakeRotater;
 
         public static final double grabPos = .39;
-        public static final double openPos = .31;
+        public static final double openPos = .29;
         public static final double armTransferPos = .9;
-        public static final double armOuttakePos = .78;
+        //armOuttakePos is .75
+        public static final double armOuttakePos = .75;
         public static final double armOuttakePos2 = .45;
-        public static final double armWallPosBack = .25;
+        public static final double armWallPosBack = .27;
         public static final double armWallPos = .93;
         public static final double outtakeRotaterPickup = .15;
         public static final double outtakeRotaterOuttake = .74;
