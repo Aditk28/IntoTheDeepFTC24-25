@@ -43,7 +43,7 @@ public class RightSideAutonomous extends LinearOpMode {
                         )
                 ))
 
-                //goToSubmersible
+                //goToSubmersible with preLoaded clip
                 .splineToConstantHeading(new Vector2d(34.5, 4), 0)
 
                 //after reaching, move lift down and open the claw
@@ -56,26 +56,27 @@ public class RightSideAutonomous extends LinearOpMode {
                 //.waitSeconds(1)
 
                 //reset position
-                .strafeToSplineHeading(new Vector2d(28, -5), Math.toRadians(6))
-                .splineToConstantHeading(new Vector2d(15, -27), 0)
+                .strafeToSplineHeading(new Vector2d(29, 0), Math.toRadians(6))
+                .splineToConstantHeading(new Vector2d(29, -20), 0)
+                .splineToConstantHeading(new Vector2d(31, -27), 0)
 //                .strafeToConstantHeading(new Vector2d(10, 0))
 //                .splineToLinearHeading(new Pose2d(10, -28, Math.toRadians(8)), Math.toRadians(90))
 
                 //bring back first brick
 
-                .splineToConstantHeading(new Vector2d(53, -27   ), 0)
-                .splineToConstantHeading(new Vector2d(53, -35), 0)
+                .splineToConstantHeading(new Vector2d(48, -27   ), 0)
+                .splineToConstantHeading(new Vector2d(48, -35), 0)
                 .splineToConstantHeading(new Vector2d(10, -35), 0)
 
                 //bring back second brick
-                .splineToConstantHeading(new Vector2d(53, -38.75), 0)
-                .splineToConstantHeading(new Vector2d(53, -48), 0)
-                .splineToConstantHeading(new Vector2d(13, -48), 0)
+                .splineToConstantHeading(new Vector2d(50, -38.75), 0)
+                .splineToConstantHeading(new Vector2d(50, -48), 0)
+                .splineToConstantHeading(new Vector2d(17, -48), 0)
 
                 //bring back third brick
-                .splineToLinearHeading(new Pose2d(53, -45, Math.toRadians(12)), 0)
-                .splineToConstantHeading(new Vector2d(53, -50), 0)
-                .splineToConstantHeading(new Vector2d(17, -50), 0)
+                .splineToLinearHeading(new Pose2d(55, -45, Math.toRadians(12)), 0)
+                .splineToConstantHeading(new Vector2d(55, -50), 0)
+                .splineToConstantHeading(new Vector2d(12, -50), 0)
 
 
                 //reset position while moving arm to the intake position
@@ -87,95 +88,139 @@ public class RightSideAutonomous extends LinearOpMode {
 
                 //go to pickup the specimen
 //                .splineToConstantHeading(new Vector2d(4.2, -34), Math.toRadians(90))
-                .splineToConstantHeading(new Vector2d(4.75, -34), 0)
+                .splineToConstantHeading(new Vector2d(4.9, -34), 0)
 
-                //after reaching, close the claw, then move the arm to the outtake position
+                //after reaching, close the claw picking up first clip
                 .afterTime(0, new SequentialAction(
-                        outtake.closeClaw(),
-                        new SleepAction(.4),
-                        outtake.armOuttakePos(),
-//                        outtake.moveArm(.86),
-                        outtake.liftUp(225)
+                        outtake.closeClaw()
                 ))
-                .waitSeconds(.5)
+                .waitSeconds(.3)
 
-                //go to submersible with the picked up specimen
-                .splineToConstantHeading(new Vector2d(34.5, 3), 0)
+                // then move the arm to the outtake position and raise lift while robot starts moving
+                .afterTime(0, new SequentialAction(
+                                //lift up value is 200
+                                outtake.armOuttakePos(),
+                                outtake.liftUp(225)
+                ))
 
-                //move the lift up (backwards outtake) then open the claw, then move the arm back to transfer position and the lift back down
+                //go to submersible with the first picked up specimen
+                .splineToConstantHeading(new Vector2d(34.5, 5), 0)
+
+                //open claw after specimen has been placed
                 .afterTime(0, new SequentialAction(
 //                        outtake.liftUp(2500),
                         outtake.openClaw()
                 ))
                 .waitSeconds(.1)
 
-                //.setReversed(true)
-                .afterTime(.2, new SequentialAction(
+                //move then start the arm turn
+                .setReversed(true)
+                .splineToConstantHeading(new Vector2d(20, 3), 0)
+                .setReversed(false)
+
+                //this is the arm turning while moving
+                .afterTime(.1, new SequentialAction(
                         outtake.armWallPosBack(),
                         outtake.liftDown(50)
                 ))
-                //go to pick up the second clip
-                .splineToConstantHeading(new Vector2d(25, 3), 0)
-                .splineToConstantHeading(new Vector2d(4.4, -34), 0)
-                //.setReversed(false)
 
-                //after reaching, close the claw and move the arm to the outtake position
+                //go to pick up the second clip
+//                .splineToConstantHeading(new Vector2d(25, 3), 0)
+                .splineToConstantHeading(new Vector2d(4.6, -34), 0)
+
+                //after reaching, close the claw picking up second clip
                 .afterTime(0, new SequentialAction(
-                        outtake.closeClaw(),
-                        new SleepAction(.1),
+                        outtake.closeClaw()
+                ))
+                .waitSeconds(.2)
+                // then move the arm to the outtake position and raise lift while robot starts moving
+                .afterTime(0, new SequentialAction(
                         outtake.armOuttakePos(),
-//                        outtake.moveArm(.86),
                         outtake.liftUp(250)
                 ))
-                .waitSeconds(.3)
 
                 //go to submersible with the second picked up clip
-                .splineToLinearHeading(new Pose2d(35, 6, Math.toRadians(4)), 0)
+                .splineToLinearHeading(new Pose2d(35, 6, Math.toRadians(0)), 0)
 
-                //after reaching, move the lift up, open the claw, and then move lift back down, then also extend the intake
-
-
-
-
-
-
-
-
-
-
-
-                //open the claw, then move the arm back to transfer position and the lift back down
+                //open the claw
                 .afterTime(0, new SequentialAction(
                         outtake.openClaw()
                 ))
-                .waitSeconds(.1)
 
-                //.setReversed(true)
-                .afterTime(.2, new SequentialAction(
+                //go back to pick up the third clip
+                .setReversed(true)
+                .splineToConstantHeading(new Vector2d(23, 3), 0)
+                .setReversed(false)
+
+                //then move arm to intake position and lower lift while movement is happening
+                .afterTime(.1, new SequentialAction(
                         outtake.armWallPosBack(),
                         outtake.liftDown(50)
                 ))
-                //go to pick up the second clip
-                .splineToConstantHeading(new Vector2d(25, 3), 0)
-                .splineToConstantHeading(new Vector2d(4.4, -34), 0)
+
+                //pick up third clip
+                .splineToConstantHeading(new Vector2d(4.6, -34), 0)
                 //.setReversed(false)
 
                 //after reaching, close the claw and move the arm to the outtake position
                 .afterTime(0, new SequentialAction(
-                        outtake.closeClaw(),
-                        new SleepAction(.1),
-                        new ParallelAction(
-                                outtake.armOuttakePos(),
-//                        outtake.moveArm(.86),
-                                outtake.liftUp(250)
-                        )
+                        outtake.closeClaw()
                 ))
-                .waitSeconds(.3)
+                .waitSeconds(.2)
 
-                //go to submersible with the second picked up clip
-                .splineToLinearHeading(new Pose2d(35, 6, Math.toRadians(4)), 0);
+                // then move the arm to the outtake position and raise lift while robot starts moving
+                .afterTime(0, new SequentialAction(
+                        outtake.armOuttakePos(),
+                        outtake.liftUp(250)
+                ))
+
+                //go to submersible with the third picked up clip
+                .splineToLinearHeading(new Pose2d(35, 7, Math.toRadians(0)), 0)
+                .afterTime(0, new SequentialAction(
+                        outtake.liftDown(50),
+                        outtake.armWallPosBack()
+                ));
 
 
+//                //THIS IS 5TH CLIP, EXPERIMENTAL
+//
+//                //open the claw
+//                .afterTime(0, new SequentialAction(
+//                        outtake.openClaw()
+//                ))
+//
+//                //go back to pick up the fourth picked up clip
+//                .splineToConstantHeading(new Vector2d(23, 3), 0)
+//
+//                //then move arm to intake position and lower lift while movement is happening
+//                .afterTime(.1, new SequentialAction(
+//                        outtake.armWallPosBack(),
+//                        outtake.liftDown(50)
+//                ))
+//
+//                //pick up fourth clip
+//                .splineToConstantHeading(new Vector2d(4.6, -34), 0)
+//                //.setReversed(false)
+//
+//                //after reaching, close the claw and move the arm to the outtake position
+//                .afterTime(0, new SequentialAction(
+//                        outtake.closeClaw(),
+//                        new SleepAction(.1)
+//                ))
+//
+//                // then move the arm to the outtake position and raise lift while robot starts moving
+//                .afterTime(0, new SequentialAction(
+//                        outtake.armOuttakePos(),
+//                        outtake.liftUp(250)
+//                ))
+//
+//                //go to submersible with the fourth picked up clip
+//                .splineToLinearHeading(new Pose2d(35, 7, Math.toRadians(4)), 0)
+//
+//                //open the claw
+//                .afterTime(0, new SequentialAction(
+//                        outtake.openClaw()
+//                ));
 
 //                .afterTime(0, new SequentialAction(
 ////                        outtake.liftUp(2500),
