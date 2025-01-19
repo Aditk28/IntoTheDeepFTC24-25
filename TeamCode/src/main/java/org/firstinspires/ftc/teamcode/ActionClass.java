@@ -188,7 +188,7 @@ public class ActionClass {
         //armOuttakePos is .75
         public static final double armOuttakePos = .75;
         public static final double armOuttakePos2 = .45;
-        public static final double armWallPosBack = .27;
+        public static final double armWallPosBack = .285;
         public static final double armWallPos = .93;
         public static final double outtakeRotaterPickup = .15;
         public static final double outtakeRotaterOuttake = .74;

@@ -333,8 +333,8 @@ public class TeleOp extends OpMode {
             }
 
             //verticalLift
-            if ( ((gamepad1.left_trigger != 0 && leftVerticalLift.getCurrentPosition() >= 0)) ||
-            ((gamepad2.left_trigger != 0 && leftVerticalLift.getCurrentPosition() >= 0)) ){
+            if ( ((gamepad1.left_trigger != 0)) ||
+            ((gamepad2.left_trigger != 0)) ){
                 rightVerticalLift.setPower(0.9);
                 leftVerticalLift.setPower(-.9);
             } else if (((gamepad1.right_trigger != 0 && leftVerticalLift.getCurrentPosition() <= 4200)) ||
