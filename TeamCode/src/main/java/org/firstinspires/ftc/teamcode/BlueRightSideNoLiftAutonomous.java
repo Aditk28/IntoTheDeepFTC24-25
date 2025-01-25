@@ -1,22 +1,20 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.acmerobotics.dashboard.config.Config;
-import com.acmerobotics.roadrunner.MinVelConstraint;
 import com.acmerobotics.roadrunner.ParallelAction;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.SequentialAction;
 import com.acmerobotics.roadrunner.SleepAction;
 import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
 import com.acmerobotics.roadrunner.Vector2d;
-import com.acmerobotics.roadrunner.VelConstraint;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.Servo;
 
 @Config
-@Autonomous(name = "Meep Meep NO LIFT Right Side Autonomous", group = "Autonomous")
-public class MeepMeepNoLiftRightSideAuton extends LinearOpMode {
+@Autonomous(name = " NO LIFT Right Side Autonomous", group = "Autonomous")
+public class BlueRightSideNoLiftAutonomous extends LinearOpMode {
 
 
     @Override
@@ -57,30 +55,27 @@ public class MeepMeepNoLiftRightSideAuton extends LinearOpMode {
                 ))
 
                 //go to the samples on the floor
-                .splineToConstantHeading(new Vector2d(-33, 40), Math.toRadians(270))
+                .splineToConstantHeading(new Vector2d(-36, 40), Math.toRadians(270))
 
                 //bring back first brick
-                .splineToConstantHeading(new Vector2d(-33, 20), Math.toRadians(270))
-                .splineToConstantHeading(new Vector2d(-33, 14), Math.toRadians(270))
-                .splineToConstantHeading(new Vector2d(-47, 14), Math.toRadians(90))
-                .splineToConstantHeading(new Vector2d(-47, 50), Math.toRadians(90))
-                .turn(Math.toRadians(8))
+                .splineToConstantHeading(new Vector2d(-35, 20), Math.toRadians(270))
+                .splineToConstantHeading(new Vector2d(-35, 14), Math.toRadians(270))
+                .splineToConstantHeading(new Vector2d(-44, 14), Math.toRadians(90))
+                .splineToConstantHeading(new Vector2d(-44, 50), Math.toRadians(90))
+                .turn(Math.toRadians(5))
 
 //                bring back second brick
-                .splineToConstantHeading(new Vector2d(-47, 20), Math.toRadians(270))
-                .splineToConstantHeading(new Vector2d(-47, 14), Math.toRadians(270))
+                .splineToConstantHeading(new Vector2d(-44, 20), Math.toRadians(270))
+                .splineToConstantHeading(new Vector2d(-44, 14), Math.toRadians(270))
                 .splineToConstantHeading(new Vector2d(-55, 14), Math.toRadians(90))
                 .splineToConstantHeading(new Vector2d(-55, 50), Math.toRadians(90))
 
                 //bring back third brick
-                .splineToConstantHeading(new Vector2d(-52, 20), Math.toRadians(270))
-                .splineToConstantHeading(new Vector2d(-52, 10), Math.toRadians(270))
-                .splineToConstantHeading(new Vector2d(-67.5, 14), Math.toRadians(90))
-                .splineToConstantHeading(new Vector2d(-67.5, 51 ), Math.toRadians(90))
+                .splineToConstantHeading(new Vector2d(-55, 20), Math.toRadians(270))
+                .splineToConstantHeading(new Vector2d(-55, 14), Math.toRadians(270))
+                .splineToConstantHeading(new Vector2d(-66, 14), Math.toRadians(90))
+                .splineToConstantHeading(new Vector2d(-66, 56), Math.toRadians(90))
 
-                //reset then pickup brick
-                .splineToConstantHeading(new Vector2d(-60, 50), Math.toRadians(270))
-                .splineToConstantHeading(new Vector2d(-45.5, 57.5), Math.toRadians(90))
                 //after reaching, close the claw picking up the second clip
                 .afterTime(0, new SequentialAction(
                         outtake.closeClaw()
@@ -97,7 +92,7 @@ public class MeepMeepNoLiftRightSideAuton extends LinearOpMode {
                 .strafeToConstantHeading(new Vector2d(-8, 40))
                 .splineToConstantHeading(new Vector2d(-2, 30.5), Math.toRadians(90))
 
-                //open claw after second specimen has been  placed
+                //open claw after second specimen has been placed
                 .afterTime(0, new SequentialAction(
                         outtake.openClaw()
                 ))
@@ -113,7 +108,7 @@ public class MeepMeepNoLiftRightSideAuton extends LinearOpMode {
 
                 //go to pick up the second specimen
                 .lineToYConstantHeading(33)
-                .splineToConstantHeading(new Vector2d(-45.5, 58.6), Math.toRadians(90))
+                .splineToConstantHeading(new Vector2d(-45.5, 58.7), Math.toRadians(90))
 
                 //after reaching, close the claw picking up third specimen
                 .afterTime(0, new SequentialAction(
@@ -147,7 +142,7 @@ public class MeepMeepNoLiftRightSideAuton extends LinearOpMode {
 
                 //go back to pick up the third specimen
                 .lineToYConstantHeading(33)
-                .splineToConstantHeading(new Vector2d(-45.5, 58.6), Math.toRadians(90))
+                .splineToConstantHeading(new Vector2d(-45.5, 58.7), Math.toRadians(90))
 
                 //close claw picking up fourth specimen
                 .afterTime(0, new SequentialAction(
@@ -181,7 +176,7 @@ public class MeepMeepNoLiftRightSideAuton extends LinearOpMode {
 
                 //go back to pick up the fourth specimen
                 .lineToYConstantHeading(33)
-                .splineToConstantHeading(new Vector2d(-45.5, 57.5), Math.toRadians(90))
+                .splineToConstantHeading(new Vector2d(-45.5, 57.7), Math.toRadians(90))
 
                 //pick up fourth specimen
                 .afterTime(0, new SequentialAction(
@@ -200,11 +195,11 @@ public class MeepMeepNoLiftRightSideAuton extends LinearOpMode {
 
                 .afterTime(0, new SequentialAction(
                         outtake.openClaw()
-                ));
+                ))
 
                 //park
-//                .lineToYConstantHeading(33)
-//                .splineToConstantHeading(new Vector2d(-45.5, 57.7), Math.toRadians(90));
+                .lineToYConstantHeading(33)
+                .splineToConstantHeading(new Vector2d(-45.5, 57.7), Math.toRadians(90));
 
 //                //reset the outtake arm
 //                .afterTime(0.1, new ParallelAction(

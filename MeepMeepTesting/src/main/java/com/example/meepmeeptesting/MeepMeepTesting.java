@@ -28,23 +28,26 @@ public class MeepMeepTesting {
                 .splineToConstantHeading((new Vector2d(-36, 40)), Math.toRadians(270))
 
                 //bring back first brick
-                .splineToConstantHeading(new Vector2d(-35, 20), Math.toRadians(270))
-                .splineToConstantHeading(new Vector2d(-35, 14), Math.toRadians(270))
-                .splineToConstantHeading(new Vector2d(-44, 14), Math.toRadians(90))
-                .splineToConstantHeading(new Vector2d(-44, 50), Math.toRadians(90))
+                .splineToConstantHeading(new Vector2d(-34, 20), Math.toRadians(270))
+                .splineToConstantHeading(new Vector2d(-34, 14), Math.toRadians(270))
+                .splineToConstantHeading(new Vector2d(-45, 14), Math.toRadians(90))
+                .splineToConstantHeading(new Vector2d(-45, 50), Math.toRadians(90))
+                .turn(Math.toRadians(5))
 
-//                //bring back second brick
-//                .turn(Math.toRadians(-5))
-                .splineToConstantHeading(new Vector2d(-40, 20), Math.toRadians(270))
-                .splineToConstantHeading(new Vector2d(-40, 14), Math.toRadians(270))
+//                bring back second brick
+                .splineToConstantHeading(new Vector2d(-45, 20), Math.toRadians(270))
+                .splineToConstantHeading(new Vector2d(-45, 14), Math.toRadians(270))
                 .splineToConstantHeading(new Vector2d(-55, 14), Math.toRadians(90))
                 .splineToConstantHeading(new Vector2d(-55, 50), Math.toRadians(90))
 
                 //bring back third brick
-                .splineToConstantHeading(new Vector2d(-51, 20), Math.toRadians(270))
-                .splineToConstantHeading(new Vector2d(-51, 12), Math.toRadians(270))
-                .splineToConstantHeading(new Vector2d(-64, 12), Math.toRadians(90))
-                .splineToConstantHeading(new Vector2d(-64, 56.5), Math.toRadians(90))
+                .splineToConstantHeading(new Vector2d(-52, 20), Math.toRadians(270))
+                .splineToConstantHeading(new Vector2d(-52, 10), Math.toRadians(270))
+                .splineToConstantHeading(new Vector2d(-66, 14), Math.toRadians(90))
+                .splineToConstantHeading(new Vector2d(-66, 54), Math.toRadians(90))
+
+                .splineToConstantHeading(new Vector2d(-60, 50), Math.toRadians(270))
+                .splineToConstantHeading(new Vector2d(-44.1, 51), Math.toRadians(90))
                 .waitSeconds(.1)
 
                 //go to submersible with the first specimen

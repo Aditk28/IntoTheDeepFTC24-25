@@ -19,7 +19,7 @@ public class NoLiftActionClass {
         private Servo intakeClaw;
         private Servo armClaw;
 
-        public static final double intakeGrabPos = 0.15;
+        public static final double intakeGrabPos = 0.14;
         public static final double intakeMovePos = 0.3;
         public static final double intakeTransferPos = 0.7;
         public static final double grabPos = .7;
@@ -187,7 +187,8 @@ public class NoLiftActionClass {
         public static final double armTransferPos = .9;
         public static final double armOuttakePos = .715; //1
         public static final double armOuttakePos2 = .8;
-        public static final double armWallPosBack = .27; //2
+        public static final double armWallPosBack = .28; //2
+
         public static final double armWallPos = .93;
         public static final double outtakeRotaterPickup = .74;
         public static final double outtakeRotaterOuttake = .16;
