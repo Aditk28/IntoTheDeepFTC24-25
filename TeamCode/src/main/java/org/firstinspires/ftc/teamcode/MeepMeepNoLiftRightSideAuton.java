@@ -95,7 +95,7 @@ public class MeepMeepNoLiftRightSideAuton extends LinearOpMode {
 
                 //go to submersible with the first specimen
                 .strafeToConstantHeading(new Vector2d(-8, 40))
-                .splineToConstantHeading(new Vector2d(-2, 30.5), Math.toRadians(90))
+                .splineToConstantHeading(new Vector2d(-6, 30.5), Math.toRadians(90))
 
                 //open claw after second specimen has been  placed
                 .afterTime(0, new SequentialAction(
@@ -129,7 +129,7 @@ public class MeepMeepNoLiftRightSideAuton extends LinearOpMode {
 
                 //go to submersible with the second specimen
                 .strafeToConstantHeading(new Vector2d(-7, 40))
-                .splineToConstantHeading(new Vector2d(-0.5, 31.5), Math.toRadians(90))
+                .splineToConstantHeading(new Vector2d(-4.5, 31.5), Math.toRadians(90))
 
                 //open claw after outtake
                 .afterTime(0, new SequentialAction(
@@ -147,7 +147,8 @@ public class MeepMeepNoLiftRightSideAuton extends LinearOpMode {
 
                 //go back to pick up the third specimen
                 .lineToYConstantHeading(33)
-                .splineToConstantHeading(new Vector2d(-45.5, 58.6), Math.toRadians(90))
+                //og y was 58.6
+                .splineToConstantHeading(new Vector2d(-45.5, 58.3), Math.toRadians(90))
 
                 //close claw picking up fourth specimen
                 .afterTime(0, new SequentialAction(
@@ -163,7 +164,7 @@ public class MeepMeepNoLiftRightSideAuton extends LinearOpMode {
 
                 //go to submersible with the third specimen
                 .strafeToConstantHeading(new Vector2d(-6, 40))
-                .splineToConstantHeading(new Vector2d(1, 31.5), Math.toRadians(90))
+                .splineToConstantHeading(new Vector2d(-3, 31.5), Math.toRadians(90))
 
                 //open claw after outtake
                 .afterTime(0, new SequentialAction(
@@ -196,7 +197,7 @@ public class MeepMeepNoLiftRightSideAuton extends LinearOpMode {
 
                 //go to submersible with the fourth specimen
                 .strafeToConstantHeading(new Vector2d(-5, 40))
-                .splineToConstantHeading(new Vector2d(2.25, 31), Math.toRadians(90))
+                .splineToConstantHeading(new Vector2d(-1.25, 31), Math.toRadians(90))
 
                 .afterTime(0, new SequentialAction(
                         outtake.openClaw()

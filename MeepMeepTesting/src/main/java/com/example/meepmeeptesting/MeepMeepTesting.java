@@ -52,7 +52,7 @@ public class MeepMeepTesting {
 
                 //go to submersible with the first specimen
                 .strafeToConstantHeading(new Vector2d(-8, 40))
-                .splineToConstantHeading(new Vector2d(-1.5, 30.5), Math.toRadians(90))
+                .splineToConstantHeading(new Vector2d(-6, 30.5), Math.toRadians(90))
 
                 //go to pick up second clip
                 .lineToYConstantHeading(33)
