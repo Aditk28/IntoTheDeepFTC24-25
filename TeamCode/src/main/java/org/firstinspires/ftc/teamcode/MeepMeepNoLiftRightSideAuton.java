@@ -23,7 +23,7 @@ public class MeepMeepNoLiftRightSideAuton extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
 
         // instantiate your MecanumDrive at a particular pose.
-        Pose2d initialPose = new Pose2d(-9.2, 62, Math.toRadians(-90));
+        Pose2d initialPose = new Pose2d(-32.3, 62, Math.toRadians(-90));
         MecanumDrive drive = new MecanumDrive(hardwareMap, initialPose);
 
         NoLiftActionClass.Intake intake = new NoLiftActionClass.Intake(hardwareMap);
@@ -34,30 +34,30 @@ public class MeepMeepNoLiftRightSideAuton extends LinearOpMode {
 
         TrajectoryActionBuilder auto = drive.actionBuilder(initialPose)
 
-                .afterTime(0, new SequentialAction(
-                        outtake.armOuttakePos()
-                ))
-                .setTangent(Math.toRadians(0))
-
-                //place first specimen
-                .splineToConstantHeading(new Vector2d(-4, 35), Math.toRadians(90))
-
-                .afterTime(0, new SequentialAction(
-                        outtake.openClaw()
-                ))
-
-                //after reaching, move arm down and open the claw
-                //move arm down out of way then back to pick up position
-                .afterTime(0.1, new ParallelAction(
-                        new SequentialAction(
-                                outtake.armOuttakePos2(),
-                                new SleepAction(.25),
-                                outtake.armWallPosBack()
-                        )
-                ))
+//                .afterTime(0, new SequentialAction(
+//                        outtake.armOuttakePos()
+//                ))
+//                .setTangent(Math.toRadians(0))
+//
+//                //place first specimen
+//                .splineToConstantHeading(new Vector2d(-4, 35), Math.toRadians(90))
+//
+//                .afterTime(0, new SequentialAction(
+//                        outtake.openClaw()
+//                ))
+//
+//                //after reaching, move arm down and open the claw
+//                //move arm down out of way then back to pick up position
+//                .afterTime(0.1, new ParallelAction(
+//                        new SequentialAction(
+//                                outtake.armOuttakePos2(),
+//                                new SleepAction(.25),
+//                                outtake.armWallPosBack()
+//                        )
+//                ))
 
                 //go to the samples on the floor
-                .splineToConstantHeading(new Vector2d(-33, 40), Math.toRadians(270))
+                .splineToConstantHeading(new Vector2d(-35, 40), Math.toRadians(270))
 
                 //bring back first brick
                 .splineToConstantHeading(new Vector2d(-33, 20), Math.toRadians(270))
@@ -198,6 +198,38 @@ public class MeepMeepNoLiftRightSideAuton extends LinearOpMode {
                 //go to submersible with the fourth specimen
                 .strafeToConstantHeading(new Vector2d(-5, 40))
                 .splineToConstantHeading(new Vector2d(-1.25, 31), Math.toRadians(90))
+
+                .afterTime(0, new SequentialAction(
+                        outtake.openClaw()
+                ))
+
+                //reset outtake arm
+                .afterTime(0.1, new ParallelAction(
+                        new SequentialAction(
+                                outtake.armOuttakePos2(),
+                                new SleepAction(.25),
+                                outtake.armWallPosBack()
+                        )
+                ))
+
+                //go back to pick up the fifth specimen
+                .lineToYConstantHeading(33)
+                .splineToConstantHeading(new Vector2d(-45.5, 57.5), Math.toRadians(90))
+
+                //pick up fourth specimen
+                .afterTime(0, new SequentialAction(
+                        outtake.closeClaw()
+                ))
+
+                .waitSeconds(.1)
+
+                .afterTime(.1, new SequentialAction(
+                        outtake.armOuttakePos()
+                ))
+
+                //go to submersible with the fourth specimen
+                .strafeToConstantHeading(new Vector2d(-5, 40))
+                .splineToConstantHeading(new Vector2d(-2.25, 31), Math.toRadians(90))
 
                 .afterTime(0, new SequentialAction(
                         outtake.openClaw()

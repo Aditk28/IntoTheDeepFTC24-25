@@ -185,7 +185,7 @@ public class NoLiftActionClass {
         public static final double grabPos = .39;
         public static final double openPos = .29;
         public static final double armTransferPos = .9;
-        public static final double armOuttakePos = .715; //1
+        public static final double armOuttakePos = .73; //1
         public static final double armOuttakePos2 = .8;
         public static final double armWallPosBack = .28; //2
 
