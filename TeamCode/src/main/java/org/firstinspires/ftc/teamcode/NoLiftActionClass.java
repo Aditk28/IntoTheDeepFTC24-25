@@ -185,12 +185,12 @@ public class NoLiftActionClass {
         public static final double grabPos = .39;
         public static final double openPos = .29;
         public static final double armTransferPos = .9;
-        public static final double armOuttakePos = .7; //1
+        public static final double armOuttakePos = .715; //1
         public static final double armOuttakePos2 = .8;
-        public static final double armWallPosBack = .31; //2
+        public static final double armWallPosBack = .27; //2
         public static final double armWallPos = .93;
-        public static final double outtakeRotaterPickup = .15;
-        public static final double outtakeRotaterOuttake = .74;
+        public static final double outtakeRotaterPickup = .74;
+        public static final double outtakeRotaterOuttake = .16;
 
 
         public Outtake(HardwareMap hardwareMap){

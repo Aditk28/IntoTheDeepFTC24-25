@@ -32,6 +32,8 @@ public class NoLiftRightSideAuton extends LinearOpMode {
 
         TrajectoryActionBuilder auto = drive.actionBuilder(initialPose)
 
+
+
                 //move lift up and arm to outtake position while going there
 
                 .afterTime(0, new SequentialAction(

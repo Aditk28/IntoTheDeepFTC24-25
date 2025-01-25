@@ -41,8 +41,8 @@ public class TeleOp extends OpMode {
     public Servo leftSusServo;
 
     //declaring action mechanisms
-    public ActionClass.Intake intake;
-    public ActionClass.Outtake outtake;
+    public NoLiftActionClass.Intake intake;
+    public NoLiftActionClass.Outtake outtake;
 
 
     //Reduces speed when true
@@ -55,23 +55,23 @@ public class TeleOp extends OpMode {
     public double rotationSpeed = 1;
     public boolean fieldOriented = false;
 
-    public double armTransferPos = ActionClass.Outtake.armTransferPos;
-    public double armOuttakePos = ActionClass.Outtake.armOuttakePos;
-    public double armOuttakePos2 = ActionClass.Outtake.armOuttakePos2;
-    public double armWallPos = ActionClass.Outtake.armWallPos;
-    public double armWallPosBack = ActionClass.Outtake.armWallPosBack;
-    public double armClawClose = ActionClass.Outtake.grabPos;
-    public double armClawOpen = ActionClass.Outtake.openPos;
-    public double intakeGrabPosRight = ActionClass.Intake.intakeGrabPos;
-    public double intakeMovePosRight = ActionClass.Intake.intakeMovePos;
-    public double intakeTransferPosRight = ActionClass.Intake.intakeTransferPos;
-    public double grabPos = ActionClass.Intake.grabPos;
-    public double openPos = ActionClass.Intake.openPos;
-    public double rotaterDefault = ActionClass.Intake.rotaterDefault;
-    public double rotaterTurned = ActionClass.Intake.rotaterTurned;
+    public double armTransferPos = NoLiftActionClass.Outtake.armTransferPos;
+    public double armOuttakePos = NoLiftActionClass.Outtake.armOuttakePos;
+    public double armOuttakePos2 = NoLiftActionClass.Outtake.armOuttakePos2;
+    public double armWallPos = NoLiftActionClass.Outtake.armWallPos;
+    public double armWallPosBack = NoLiftActionClass.Outtake.armWallPosBack;
+    public double armClawClose = NoLiftActionClass.Outtake.grabPos;
+    public double armClawOpen = NoLiftActionClass.Outtake.openPos;
+    public double intakeGrabPosRight = NoLiftActionClass.Intake.intakeGrabPos;
+    public double intakeMovePosRight = NoLiftActionClass.Intake.intakeMovePos;
+    public double intakeTransferPosRight = NoLiftActionClass.Intake.intakeTransferPos;
+    public double grabPos = NoLiftActionClass.Intake.grabPos;
+    public double openPos = NoLiftActionClass.Intake.openPos;
+    public double rotaterDefault = NoLiftActionClass.Intake.rotaterDefault;
+    public double rotaterTurned = NoLiftActionClass.Intake.rotaterTurned;
 
-    public double outtakeRotaterPickup = ActionClass.Outtake.outtakeRotaterPickup;
-    public double outtakeRotaterOuttake = ActionClass.Outtake.outtakeRotaterOuttake;
+    public double outtakeRotaterPickup = NoLiftActionClass.Outtake.outtakeRotaterPickup;
+    public double outtakeRotaterOuttake = NoLiftActionClass.Outtake.outtakeRotaterOuttake;
     private MecanumDrive drive;
     private FtcDashboard dash = FtcDashboard.getInstance();
     private List<Action> runningActions = new ArrayList<>();
@@ -137,8 +137,8 @@ public class TeleOp extends OpMode {
         intakeClaw = hardwareMap.get(Servo.class, "intakeClaw");
         rightSusServo = hardwareMap.get(Servo.class, "rightSusServo");
         leftSusServo = hardwareMap.get(Servo.class, "leftSusServo");
-        intake = new ActionClass.Intake(hardwareMap);
-        outtake = new ActionClass.Outtake(hardwareMap);
+        intake = new NoLiftActionClass.Intake(hardwareMap);
+        outtake = new NoLiftActionClass.Outtake(hardwareMap);
 
         //resetting encoders cause why not
         leftVerticalLift.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
@@ -208,50 +208,50 @@ public class TeleOp extends OpMode {
                 ));
             }
 
-            //AUTOMATIC TRANSFER, will only happen when horizontal lift is in
-            else if ((gamepad1.dpad_right || gamepad2.dpad_right) && (horizontalLift.getCurrentPosition() < 1300)) {
-                runningActions.add(new SequentialAction(
-                        new ParallelAction(
-                                outtake.liftDown(50),
-                                outtake.openClaw(),
-                                intake.armMovePos(),
-                                intake.liftOut(400)
-                        ),
-                        new ParallelAction(
-                                intake.armTransferPos(),
-                                outtake.armTransferPos()
-                        ),
-                        new SleepAction(2),
-                        new ParallelAction(
-                                outtake.closeClaw(),
-                                new SleepAction(.5),
-                                intake.openClaw()
-                        )
-                ));
-            }
+//            //AUTOMATIC TRANSFER, will only happen when horizontal lift is in
+//            else if ((gamepad1.dpad_right || gamepad2.dpad_right) && (horizontalLift.getCurrentPosition() < 1300)) {
+//                runningActions.add(new SequentialAction(
+//                        new ParallelAction(
+//                                outtake.liftDown(50),
+//                                outtake.openClaw(),
+//                                intake.armMovePos(),
+//                                intake.liftOut(400)
+//                        ),
+//                        new ParallelAction(
+//                                intake.armTransferPos(),
+//                                outtake.armTransferPos()
+//                        ),
+//                        new SleepAction(2),
+//                        new ParallelAction(
+//                                outtake.closeClaw(),
+//                                new SleepAction(.5),
+//                                intake.openClaw()
+//                        )
+//                ));
+//            }
 
-            //AUTOMATIC GROUND OUTTAKE WHILE WALL INTAKE
-            if (gamepad2.dpad_down) {
-                runningActions.add(new SequentialAction(
-                        new ParallelAction(
-                                outtake.armTransferPos(),
-                                outtake.openClaw()
-                        ),
-                        new SleepAction(1),
-                        intake.armGrabPos(),
-                        intake.openClaw()
-                ));
-            }
+//            //AUTOMATIC GROUND OUTTAKE WHILE WALL INTAKE
+//            if (gamepad2.dpad_down) {
+//                runningActions.add(new SequentialAction(
+//                        new ParallelAction(
+//                                outtake.armTransferPos(),
+//                                outtake.openClaw()
+//                        ),
+//                        new SleepAction(1),
+//                        intake.armGrabPos(),
+//                        intake.openClaw()
+//                ));
+//            }
 
-            //AUTOMATIC CLIP OUTTAKE
-            if (gamepad2.dpad_up) {
-                runningActions.add(new SequentialAction(
-                        outtake.armOuttakePos(),
-                        new SleepAction(1.5),
-                        outtake.liftDown(leftVerticalLift.getCurrentPosition() - 100),
-                        outtake.openClaw()
-                ));
-            }
+//            //AUTOMATIC CLIP OUTTAKE
+//            if (gamepad2.dpad_up) {
+//                runningActions.add(new SequentialAction(
+//                        outtake.armOuttakePos(),
+//                        new SleepAction(1.5),
+//                        outtake.liftDown(leftVerticalLift.getCurrentPosition() - 100),
+//                        outtake.openClaw()
+//                ));
+//            }
 
 
             //** MANUAL CONTROLS **
@@ -391,8 +391,9 @@ public class TeleOp extends OpMode {
         telemetry.addData("leftLiftMotorPosition", leftVerticalLift.getCurrentPosition());
         telemetry.addData("horizontalliftMotorPosition", horizontalLift.getCurrentPosition());
         telemetry.addData("rightArmServoPos", rightArm.getPosition());
-        telemetry.addData("armClawPos", armClaw.getPosition());
+        telemetry.addData("intakeClawPosition", intakeClaw.getPosition());
         telemetry.addData("intakeArmPosition", intakeArm.getPosition());
+        telemetry.addData("rotaterPosition", rotater.getPosition());
         telemetry.addData("gamepad2 left stick x and y: ", gamepad2.left_stick_x + " " + gamepad2.left_stick_y);
 
     }
