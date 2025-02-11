@@ -19,77 +19,82 @@ public class MeepMeepTesting {
                 .setDimensions(18, 18)
                 .build();
                 //x = -9.2
-        myBot.runAction(myBot.getDrive().actionBuilder(new Pose2d(-32.3, 62, Math.toRadians(-90)))
+        myBot.runAction(myBot.getDrive().actionBuilder(new Pose2d(-9.2, 62, Math.toRadians(-90)))
 
                 //conversion rule Auton (x, y) -- > (y - 9, -x + 62)
+                .strafeToConstantHeading(new Vector2d(-9.2, 60))
+
+                //place first specimen
+                .splineToConstantHeading(new Vector2d(-4, 35), Math.toRadians(90))
 
                 //this is the auton that goes straight for the placed samples
-
-                .splineToConstantHeading((new Vector2d(-36, 40)), Math.toRadians(270))
+//                .strafeToConstantHeading((new Vector2d(-33, 40)))
+                //go to the samples on the floor
+                //36
+                .splineToConstantHeading((new Vector2d(-34, 35)), Math.toRadians(270))
 
                 //bring back first brick
-                .splineToConstantHeading(new Vector2d(-34, 20), Math.toRadians(270))
                 .splineToConstantHeading(new Vector2d(-34, 14), Math.toRadians(270))
-                .splineToConstantHeading(new Vector2d(-45, 14), Math.toRadians(90))
-                .splineToConstantHeading(new Vector2d(-45, 50), Math.toRadians(90))
-                .turn(Math.toRadians(5))
+                .splineToConstantHeading(new Vector2d(-34, 11), Math.toRadians(270))
+                .splineToConstantHeading(new Vector2d(-45, 11), Math.toRadians(90))
+                .splineToConstantHeading(new Vector2d(-45, 45), Math.toRadians(90))
 
 //                bring back second brick
-                .splineToConstantHeading(new Vector2d(-45, 20), Math.toRadians(270))
                 .splineToConstantHeading(new Vector2d(-45, 14), Math.toRadians(270))
-                .splineToConstantHeading(new Vector2d(-55, 14), Math.toRadians(90))
-                .splineToConstantHeading(new Vector2d(-55, 50), Math.toRadians(90))
+                .splineToConstantHeading(new Vector2d(-45, 9), Math.toRadians(270))
+                .splineToConstantHeading(new Vector2d(-60, 9), Math.toRadians(90))
+                .splineToConstantHeading(new Vector2d(-60, 45), Math.toRadians(90))
 
                 //bring back third brick
-                .splineToConstantHeading(new Vector2d(-52, 20), Math.toRadians(270))
+                .splineToConstantHeading(new Vector2d(-52, 14), Math.toRadians(270))
                 .splineToConstantHeading(new Vector2d(-52, 10), Math.toRadians(270))
                 .splineToConstantHeading(new Vector2d(-66, 14), Math.toRadians(90))
-                .splineToConstantHeading(new Vector2d(-66, 54), Math.toRadians(90))
+                .splineToConstantHeading(new Vector2d(-67, 45), Math.toRadians(90))
 
                 .splineToConstantHeading(new Vector2d(-60, 50), Math.toRadians(270))
-                .splineToConstantHeading(new Vector2d(-44.1, 51), Math.toRadians(90))
+                .splineToConstantHeading(new Vector2d(-45.5, 57.5), Math.toRadians(90))
                 .waitSeconds(.1)
 
                 //go to submersible with the first specimen
                 .strafeToConstantHeading(new Vector2d(-8, 40))
-                .splineToConstantHeading(new Vector2d(-6, 30.5), Math.toRadians(90))
+                .splineToConstantHeading(new Vector2d(-3, 30.5), Math.toRadians(90))
 
                 //go to pick up second clip
                 .lineToYConstantHeading(33)
-                .splineToConstantHeading(new Vector2d(-44.1, 58), Math.toRadians(90))
+                .splineToConstantHeading(new Vector2d(-45.5, 58.6), Math.toRadians(90))
                 .waitSeconds(.1)
 
                 //go to submersible with the second picked up clip
                 .strafeToConstantHeading(new Vector2d(-7, 40))
-                .splineToConstantHeading(new Vector2d(0.25, 31.5), Math.toRadians(90))
+                .splineToConstantHeading(new Vector2d(0, 31.5), Math.toRadians(90))
 
                 //go back to pick up the third clip
                 .lineToYConstantHeading(33)
-                .splineToConstantHeading(new Vector2d(-44.1, 58), Math.toRadians(90))
+                .splineToConstantHeading(new Vector2d(-45.5, 58.6), Math.toRadians(90))
                 .waitSeconds(.1)
 
                 //go to submersible with the third picked up clip
                 .strafeToConstantHeading(new Vector2d(-6, 40))
-                .splineToConstantHeading(new Vector2d(2.25, 31.5), Math.toRadians(90))
+                .splineToConstantHeading(new Vector2d(2, 31.5), Math.toRadians(90))
 
                 //go back to pick up the fourth clip
                 .lineToYConstantHeading(33)
-                .splineToConstantHeading(new Vector2d(-44.1, 58), Math.toRadians(90))
+                .splineToConstantHeading(new Vector2d(-45.5, 58.6), Math.toRadians(90))
                 .waitSeconds(.1)
 
 
                 //go to submersible with the fourth picked up clip
-                .strafeToConstantHeading(new Vector2d(-5, 40))
-                .splineToConstantHeading(new Vector2d(4.25, 31.5), Math.toRadians(90))
+                .strafeToConstantHeading(new Vector2d(-10, 40))
+                .splineToConstantHeading(new Vector2d(-9, 31.5), Math.toRadians(90))
 
                 //go back to pick up the fifth clip
-                .lineToYConstantHeading(33)
-                .splineToConstantHeading(new Vector2d(-44.1, 58), Math.toRadians(90))
-                .waitSeconds(.1)
-
-                //place fifth clip
-                .strafeToConstantHeading(new Vector2d(-4, 40))
-                .splineToConstantHeading(new Vector2d(6, 31.5), Math.toRadians(90))
+//                .lineToYConstantHeading(33)
+//                .splineToConstantHeading(new Vector2d(-45.5, 58.6), Math.toRadians(90))
+//                .waitSeconds(.1)
+//
+//                //place fifth clip
+//                .strafeToConstantHeading(new Vector2d(-4, 40))
+//                .splineToConstantHeading(new Vector2d(6, 31.5), Math.toRadians(90))
 
 
 //                //auton with strafe placements starting with samples

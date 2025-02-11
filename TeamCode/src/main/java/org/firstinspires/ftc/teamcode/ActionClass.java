@@ -15,17 +15,19 @@ public class ActionClass {
         private DcMotorEx lift;
         private Servo rotater;
         private Servo rightIntakeArm;
-//        private Servo leftIntakeArm;
+        //        private Servo leftIntakeArm;
         private Servo intakeClaw;
         private Servo armClaw;
 
-        public static final double intakeGrabPos = 0.15;
-        public static final double intakeMovePos = 0.3;
+
+        public static final double intakeGrabPos = 0.10;
+        public static final double intakeMovePos = 0.25;
         public static final double intakeTransferPos = 0.7;
         public static final double grabPos = .7;
         public static final double openPos = .38;
-        public static final double rotaterDefault = .2;
-        public static final double rotaterTurned = 0.52;
+        public static final double rotaterDefault = .5;
+        public static final double rotaterTurned = .8;
+
 
 
         public Intake(HardwareMap hardwareMap){
@@ -180,25 +182,30 @@ public class ActionClass {
         private DcMotorEx rightVerticalLift;
         private Servo claw;
         private Servo rightArm;
+//        private Servo leftArm;
         private Servo outtakeRotater;
 
-        public static final double grabPos = .39;
-        public static final double openPos = .29;
-        public static final double armTransferPos = .9;
-        //armOuttakePos is .75
-        public static final double armOuttakePos = .75;
-        public static final double armOuttakePos2 = .45;
-        public static final double armWallPosBack = .285;
+        public static final double grabPos = .47; // .43
+        public static final double almostClosedPos = .37; // .37
+        public static final double halfCLosed = .34; // .34
+        public static final double openPos = .31; // .33
+        public static final double armTransferPos = 1.0;
+        public static final double armOuttakePos = 0.935; //1
+        public static final double armOuttakePos2 = 1.0;
+        public static final double armWallPosBack = 0.04; //2
+
         public static final double armWallPos = .93;
-        public static final double outtakeRotaterPickup = .15;
-        public static final double outtakeRotaterOuttake = .74;
+        public static final double outtakeRotaterPickup = .74;
+        public static final double outtakeRotaterOuttake = .16;
 
 
         public Outtake(HardwareMap hardwareMap){
             leftVerticalLift = hardwareMap.get(DcMotorEx.class, "leftVerticalLift");
             rightVerticalLift = hardwareMap.get(DcMotorEx.class, "rightVerticalLift");
             claw = hardwareMap.get(Servo.class, "armClaw");
-            rightArm = hardwareMap.get(Servo.class, "rightArm");
+            rightArm = hardwareMap.get(Servo.class, "rightArm"); // og
+//            leftArm = hardwareMap.get(Servo.class, "leftArm");
+//            leftArm.setDirection(Servo.Direction.FORWARD);
             outtakeRotater = hardwareMap.get(Servo.class, "outtakeRotater");
         }
 
@@ -212,6 +219,7 @@ public class ActionClass {
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
                 rightArm.setPosition(pos);
+//                leftArm.setPosition(pos);
                 outtakeRotater.setPosition(rotaterPos);
                 return false;
             }
@@ -357,6 +365,8 @@ public class ActionClass {
         public Action closeClaw() {
             return new Claw(grabPos);
         }
+        public Action almostCloseClaw() {return new Claw(almostClosedPos);}
+        public Action halfClosed() {return new Claw(halfCLosed);}
         public Action openClaw() {
             return new Claw(openPos);
         }
@@ -364,4 +374,3 @@ public class ActionClass {
     }
 
 }
-

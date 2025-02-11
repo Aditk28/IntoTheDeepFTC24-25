@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.DualNum;
+import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.Time;
 import com.acmerobotics.roadrunner.Twist2dDual;
 import com.acmerobotics.roadrunner.Vector2d;
