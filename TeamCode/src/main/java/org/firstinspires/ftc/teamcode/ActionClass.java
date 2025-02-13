@@ -8,6 +8,8 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import org.firstinspires.ftc.robotcontroller.external.samples.SensorREV2mDistance;
+
 
 public class ActionClass {
 
@@ -19,8 +21,7 @@ public class ActionClass {
         private Servo intakeClaw;
         private Servo armClaw;
 
-
-        public static final double intakeGrabPos = 0.10;
+        public static final double intakeGrabPos = 0.0;
         public static final double intakeMovePos = 0.25;
         public static final double intakeTransferPos = 0.7;
         public static final double grabPos = .7;
@@ -372,5 +373,17 @@ public class ActionClass {
         }
 
     }
+
+//    public static class DistanceSensors {
+//        private SensorREV2mDistance distanceSensorLeft;
+//        private SensorREV2mDistance distanceSensorRight;
+//
+//        public DistanceSensors(HardwareMap hardwareMap) {
+//            distanceSensorLeft = hardwareMap.get(SensorREV2mDistance.class, "distanceSensorLeft");
+//            distanceSensorRight = hardwareMap.get(SensorREV2mDistance.class, "distanceSensorRight");
+//        }
+//
+//
+//    }
 
 }

@@ -78,6 +78,12 @@ public class TeleOp extends OpMode {
     public double outtakeRotaterPickup = ActionClass.Outtake.outtakeRotaterPickup;
     public double outtakeRotaterOuttake = ActionClass.Outtake.outtakeRotaterOuttake;
 
+//    public static boolean slidesOut = false;
+//
+//    public static boolean slidesIn = false;
+//
+//    public static boolean slidesOff = true;
+
     private MecanumDrive drive;
     private FtcDashboard dash = FtcDashboard.getInstance();
     private List<Action> runningActions = new ArrayList<>();
@@ -166,10 +172,10 @@ public class TeleOp extends OpMode {
         //
         //horizontal slides
 
-        if (gamepad2.right_bumper) {
+        if (gamepad2.right_bumper || gamepad1.right_trigger > 0) {
             horizontalLift.setTargetPosition(2100);
             horizontalLift.setPower(0.9);
-        } else if (gamepad2.left_bumper) {
+        } else if (gamepad2.left_bumper || gamepad1.left_trigger > 0) {
             horizontalLift.setTargetPosition(0);
             horizontalLift.setPower(0.9); //try negative if this doesnt work
         } else {
@@ -177,6 +183,40 @@ public class TeleOp extends OpMode {
             horizontalLift.setPower(0);
             horizontalLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         }
+
+//        if (slidesOut) {
+//            horizontalLift.setTargetPosition(2100);
+//            horizontalLift.setPower(0.9);
+//        } else if (slidesIn) {
+//            horizontalLift.setTargetPosition(0);
+//            horizontalLift.setPower(0.9); //try negative if this doesnt work
+//        } else if (slidesOff) {
+//            horizontalLift.setTargetPosition(0);
+//            horizontalLift.setPower(0);
+//            horizontalLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+//        }
+//
+//        if (gamepad2.right_bumper || gamepad1.right_trigger > 0) {
+//            if (slidesIn) {
+//                slidesOff = true;
+//                slidesIn = false;
+//                slidesOut = false;
+//            }
+//            else {
+//                slidesOff = false;
+//                slidesOut = true;
+//            }
+//        } else if (gamepad2.left_bumper || gamepad1.left_trigger > 0) {
+//            if (slidesOut) {
+//                slidesOff = true;
+//                slidesIn = false;
+//                slidesOut = false;
+//            }
+//            else {
+//                slidesOff = false;
+//                slidesIn = true;
+//            }
+//        }
 
         //actions
         TelemetryPacket packet = new TelemetryPacket();
@@ -201,7 +241,7 @@ public class TeleOp extends OpMode {
         telemetry.update();
 
         //RESET VERTICAL LIFT ENCODERS AND RUNNING ACTIONS, ONLY DO THIS WHEN LIFT IS DOWN
-        if ((gamepad1.a)) {
+        if ((gamepad1.dpad_down)) {
             rightVerticalLift.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
             rightVerticalLift.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
             leftVerticalLift.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
@@ -290,6 +330,22 @@ public class TeleOp extends OpMode {
                 armClaw.setPosition(armClawClose);
             }
 
+            if (gamepad1.a) {
+                armClaw.setPosition(armClawOpen);
+                outtakeRotater.setPosition(outtakeRotaterPickup);
+                rightArm.setPosition(armWallPosBack);
+            }
+            else if (gamepad1.y) {
+                armClaw.setPosition(armClawClose);
+                try {
+                    Thread.sleep(400);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+                outtakeRotater.setPosition(outtakeRotaterOuttake);
+                rightArm.setPosition(armOuttakePos);
+            }
+
             //rotater to preset position
             if ( gamepad1.right_bumper && rotater.getPosition() != rotaterDefault) {
                 rotater.setPosition(rotaterDefault);
@@ -350,12 +406,12 @@ public class TeleOp extends OpMode {
             //intakeClaw
             if (gamepad1.x || gamepad2.x) {
                 intakeClaw.setPosition(openPos);
+                intakeArm.setPosition(intakeGrabPosRight);
                 try {
-                    Thread.sleep(100);
+                    Thread.sleep(200);
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
                 }
-                intakeArm.setPosition(intakeGrabPosRight);
                 intakeClaw.setPosition(grabPos);
                 try {
                     Thread.sleep(300);
@@ -383,11 +439,11 @@ public class TeleOp extends OpMode {
             }
 
 //            verticalLift
-            if ( ((gamepad1.left_trigger != 0)) ||
+            if (
             ((gamepad2.left_trigger != 0)) ){
                 rightVerticalLift.setPower(0.9);
                 leftVerticalLift.setPower(-.9);
-            } else if (((gamepad1.right_trigger != 0 && leftVerticalLift.getCurrentPosition() <= 4200)) ||
+            } else if (
                     ((gamepad2.right_trigger != 0 && leftVerticalLift.getCurrentPosition() <= 4200) )) {
                 rightVerticalLift.setPower(-0.9);
                 leftVerticalLift.setPower(.9);
