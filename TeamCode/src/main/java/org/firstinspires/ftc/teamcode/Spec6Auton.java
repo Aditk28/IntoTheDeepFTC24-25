@@ -10,11 +10,10 @@ import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.Servo;
 
 @Config
-@Autonomous(name = "5 SPEC AUTON", group = "Autonomous")
-public class Spec5Auton extends LinearOpMode {
+@Autonomous(name = "6 SPEC AUTON", group = "Autonomous")
+public class Spec6Auton extends LinearOpMode {
 
 
     @Override
@@ -31,49 +30,61 @@ public class Spec5Auton extends LinearOpMode {
 
         TrajectoryActionBuilder auto = drive.actionBuilder(initialPose)
 
-                .afterTime(0.0, new SequentialAction(
-                        outtake.armOuttakePos()
+                .afterTime(0, new SequentialAction(
+                        outtake.halfClosed()
                 ))
+                .strafeToConstantHeading(new Vector2d(-9.2, 61.2))
+
+
+
+                .waitSeconds(0.1)
+
+
 
                 //place first specimen
                 .splineToConstantHeading(new Vector2d(-6, 35), Math.toRadians(90))
 
                 //open claw after drop
-                .afterTime(0, new SequentialAction(
-                        outtake.halfClosed()
-                ))
+
 
                 //move arm down out of way then back to pick up position
-                .afterTime(0.0, new ParallelAction(
-                                outtake.armWallPosBack()
-                        )
-                )
+
+
 
                 //go to the samples on the floor
-                .splineToConstantHeading((new Vector2d(-36, 36)), Math.toRadians(270))
+                .splineToSplineHeading((new Pose2d(-25, 40, Math.toRadians(-225))), Math.toRadians(270))
 
-                //bring back first brick
-                .splineToConstantHeading(new Vector2d(-34, 20), Math.toRadians(270))
-                .splineToConstantHeading(new Vector2d(-34, 17), Math.toRadians(270))
-                .splineToConstantHeading(new Vector2d(-46, 17), Math.toRadians(90))
-                .splineToConstantHeading(new Vector2d(-46, 47), Math.toRadians(90))
+                //sweep first brick
+                .afterTime(0.0, new SequentialAction(
+                        intake.sweeperOut()
+                ))
+                .strafeToLinearHeading(new Vector2d(-34, 37), Math.toRadians(-125))
+                .turnTo(Math.toRadians(-225))
+                .afterTime(0.0, new SequentialAction(
+                        intake.sweeperIn()
+                ))
 
-//                bring back second brick
-                .splineToConstantHeading(new Vector2d(-46, 14), Math.toRadians(270))
-                .splineToConstantHeading(new Vector2d(-46, 9), Math.toRadians(270))
-                .splineToConstantHeading(new Vector2d(-58, 9), Math.toRadians(90))
-                .splineToConstantHeading(new Vector2d(-58, 45), Math.toRadians(90))
+                //sweep second brick
+                .afterTime(0.0, new SequentialAction(
+                        intake.sweeperOut()
+                ))
+                .strafeToLinearHeading(new Vector2d(-42, 37), Math.toRadians(-125))
+                .turnTo(Math.toRadians(-225))
+                .afterTime(0.0, new SequentialAction(
+                        intake.sweeperIn()
+                ))
 
+                //sweep third brick
+                .afterTime(0.0, new SequentialAction(
+                        intake.sweeperOut()
+                ))
+                .strafeToLinearHeading(new Vector2d(-52, 37), Math.toRadians(-125))
+                .turnTo(Math.toRadians(-225))
+                .afterTime(0.0, new SequentialAction(
+                        intake.sweeperIn()
+                ))
 
-
-                //bring back third brick
-                .splineToConstantHeading(new Vector2d(-58, 14), Math.toRadians(270))
-                .splineToConstantHeading(new Vector2d(-58, 8), Math.toRadians(270))
-                .splineToConstantHeading(new Vector2d(-72, 14), Math.toRadians(90))
-                .splineToConstantHeading(new Vector2d(-72, 45), Math.toRadians(90))
-          
-                .splineToConstantHeading(new Vector2d(-60, 45), Math.toRadians(270))
-                .splineToConstantHeading(new Vector2d(-49.5, 60), Math.toRadians(90))
+                .splineToLinearHeading(new Pose2d(-49.5, 60, Math.toRadians(-90)), Math.toRadians(90))
 
                 //after reaching, close the claw picking up the second specimen
                 .afterTime(0, new SequentialAction(
@@ -100,7 +111,7 @@ public class Spec5Auton extends LinearOpMode {
                 ))
 
                 //move arm down out of way then back to pick up position
-                .afterTime(0.0, new ParallelAction(
+                .afterTime(0, new ParallelAction(
                                 outtake.armWallPosBack()
                         )
                 )
@@ -109,7 +120,7 @@ public class Spec5Auton extends LinearOpMode {
                 .lineToYConstantHeading(33)
                 .splineToConstantHeading(new Vector2d(-49.5, 61), Math.toRadians(90))
 
-                //after reaching, close the claw picking up third specimen
+                //after reaching, close the claw after picking up third specimen
                 .afterTime(0, new SequentialAction(
                         outtake.closeClaw()
                 ))
@@ -134,7 +145,7 @@ public class Spec5Auton extends LinearOpMode {
                 ))
 
                 //reset the outtake arm
-                .afterTime(0.1, new ParallelAction(
+                .afterTime(0, new ParallelAction(
                                 outtake.armWallPosBack()
                         )
                 )
@@ -169,7 +180,7 @@ public class Spec5Auton extends LinearOpMode {
                 ))
 
                 //reset outtake arm
-                .afterTime(0.1, new ParallelAction(
+                .afterTime(0.0, new ParallelAction(
                                 outtake.armWallPosBack()
                         )
                 )
@@ -199,7 +210,38 @@ public class Spec5Auton extends LinearOpMode {
                 //open claw after outtake
                 .afterTime(0, new SequentialAction(
                         outtake.halfClosed()
-                ));
+                ))
+
+                //go back to pick up the sixth specimen
+                .lineToYConstantHeading(33)
+                .splineToConstantHeading(new Vector2d(-49.5, 61), Math.toRadians(90))
+
+                //pick up sixth specimen
+                .afterTime(0, new SequentialAction(
+                        outtake.closeClaw()
+                ))
+
+//                .waitSeconds(.1)
+
+                .afterTime(0.0, new SequentialAction(
+                        outtake.armOuttakePos()
+                ))
+
+                //go to submersible with the sixth specimen
+                .strafeToConstantHeading(new Vector2d(-3, 40))
+                .splineToConstantHeading(new Vector2d(-2, 27.5), Math.toRadians(90))
+
+//                .strafeToConstantHeading(new Vector2d(-5, 40))
+//                .splineToConstantHeading(new Vector2d(-1.25, 30), Math.toRadians(90))
+
+                //open claw after outtake
+                .afterTime(0, new SequentialAction(
+                        outtake.halfClosed()
+                ))
+
+                //park in loading zone
+                .lineToYConstantHeading(33)
+                .splineToConstantHeading(new Vector2d(-49.5, 61), Math.toRadians(90));
 
         waitForStart();
         if (isStopRequested()) return;
