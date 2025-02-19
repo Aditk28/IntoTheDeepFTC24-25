@@ -7,10 +7,8 @@ import com.acmerobotics.roadrunner.Action;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.hardware.DistanceSensor;
 
 import org.firstinspires.ftc.robotcontroller.external.samples.SensorREV2mDistance;
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 
 public class ActionClass {
@@ -18,85 +16,47 @@ public class ActionClass {
     public static class Intake{
         private DcMotorEx lift;
         private Servo rotater;
-        private Servo intakeRightArm;
-        private Servo intakeLeftArm;
+        private Servo rightIntakeArm;
+        //        private Servo leftIntakeArm;
+        private Servo intakeClaw;
+        private Servo armClaw;
 
-        private Servo intakeCLawRight;
-
-        private Servo intakeClawLeft;
-        private Servo sweeper;
-
-        public static final double intakeGrabPos = 0.03;
-        public static final double intakeMovePos = 0.29;
-        public static final double intakeTransferPos = 0.75;
-
-        public static final double rightMoreClose = 0.7;
-        public static final double rightClosePos = 0.55;
-        public static final double rightOpenPos = 0.0;
-
-        public static final double leftMoreClose = 0.7;
-        public static final double leftClosePos = 0.6;
-        public static final double leftOpenPos = 0.35;
-        public static final double rotaterDefault = 0.7;
-        public static final double rotaterTurned = 1.0; //.35
-
-        public static final double sweeperInPos = .8;
-
-        public static final double sweeperOutPos = .8;
-
+        public static final double intakeGrabPos = 0.0;
+        public static final double intakeMovePos = 0.25;
+        public static final double intakeTransferPos = 0.7;
+        public static final double grabPos = .7;
+        public static final double openPos = .38;
+        public static final double rotaterDefault = .5;
+        public static final double rotaterTurned = .8;
 
 
 
         public Intake(HardwareMap hardwareMap){
             lift = hardwareMap.get(DcMotorEx.class, "horizontalLift");
+            armClaw = hardwareMap.get(Servo.class, "armClaw");
             rotater = hardwareMap.get(Servo.class, "rotater");
-            intakeRightArm = hardwareMap.get(Servo.class, "intakeRightArm");
-            intakeLeftArm = hardwareMap.get(Servo.class, "intakeLeftArm");
-            intakeLeftArm.setDirection(Servo.Direction.REVERSE);
-            intakeCLawRight = hardwareMap.get(Servo.class, "intakeClawRight");
-            intakeClawLeft = hardwareMap.get(Servo.class, "intakeClawLeft");
-            intakeClawLeft.setDirection(Servo.Direction.REVERSE);
-            sweeper = hardwareMap.get(Servo.class, "sweeper");
+            rightIntakeArm = hardwareMap.get(Servo.class, "intakeArm");
+//            leftIntakeArm = hardwareMap.get(Servo.class, "leftIntakeArm");
+            intakeClaw = hardwareMap.get(Servo.class, "intakeClaw");
         }
 
-        public class sweeper implements Action{
-            private double pos;
+        public class Claw implements Action{
 
-            public sweeper(double pos) {
+            private double pos;
+            public Claw(double pos) {
                 this.pos = pos;
             }
             @Override
             public boolean run(@NonNull TelemetryPacket packet){
-                sweeper.setPosition(pos);
-                return false;
-            }
-        }
-
-        public Action sweeperIn() { return new sweeper(sweeperInPos);}
-
-        public Action sweeperOut() { return new sweeper(sweeperOutPos);}
-
-        public class Claw implements Action{
-
-            private double rightPos;
-            private double leftPos;
-
-            public Claw(double rightPos, double leftPos) {
-                this.rightPos = rightPos;
-                this.leftPos = leftPos;
-            }
-            @Override
-            public boolean run(@NonNull TelemetryPacket packet){
-                intakeCLawRight.setPosition(rightPos);
-                intakeClawLeft.setPosition(leftPos);
+                intakeClaw.setPosition(pos);
                 return false;
             }
         }
         public Action closeClaw() {
-            return new Claw(rightClosePos, leftClosePos);
+            return new Claw(grabPos);
         }
         public Action openClaw() {
-            return new Claw(rightOpenPos, leftClosePos);
+            return new Claw(openPos);
         }
 
         public class Rotater implements Action{
@@ -205,8 +165,7 @@ public class ActionClass {
             }
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
-                intakeRightArm.setPosition(pos);
-                intakeLeftArm.setPosition(pos);
+                rightIntakeArm.setPosition(pos);
                 return false;
             }
         }
@@ -224,7 +183,7 @@ public class ActionClass {
         private DcMotorEx rightVerticalLift;
         private Servo claw;
         private Servo rightArm;
-        private Servo leftArm;
+//        private Servo leftArm;
         private Servo outtakeRotater;
 
         public static final double grabPos = .47; // .43
@@ -232,9 +191,9 @@ public class ActionClass {
         public static final double halfCLosed = .34; // .34
         public static final double openPos = .31; // .33
         public static final double armTransferPos = 1.0;
-        public static final double armOuttakePos = 0.93; //1
+        public static final double armOuttakePos = 0.935; //1
         public static final double armOuttakePos2 = 1.0;
-        public static final double armWallPosBack = 0.00; //2
+        public static final double armWallPosBack = 0.04; //2
 
         public static final double armWallPos = .93;
         public static final double outtakeRotaterPickup = .74;
@@ -246,8 +205,8 @@ public class ActionClass {
             rightVerticalLift = hardwareMap.get(DcMotorEx.class, "rightVerticalLift");
             claw = hardwareMap.get(Servo.class, "armClaw");
             rightArm = hardwareMap.get(Servo.class, "rightArm"); // og
-            leftArm = hardwareMap.get(Servo.class, "leftArm");
-            leftArm.setDirection(Servo.Direction.REVERSE);
+//            leftArm = hardwareMap.get(Servo.class, "leftArm");
+//            leftArm.setDirection(Servo.Direction.FORWARD);
             outtakeRotater = hardwareMap.get(Servo.class, "outtakeRotater");
         }
 
@@ -261,7 +220,7 @@ public class ActionClass {
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
                 rightArm.setPosition(pos);
-                leftArm.setPosition(pos);
+//                leftArm.setPosition(pos);
                 outtakeRotater.setPosition(rotaterPos);
                 return false;
             }
@@ -415,43 +374,16 @@ public class ActionClass {
 
     }
 
-    public static class DistanceSensors {
-        public  DistanceSensor distanceSensorLeft;
-        public  DistanceSensor distanceSensorRight;
-
-        public DistanceSensors(HardwareMap hardwareMap) {
-            distanceSensorLeft = hardwareMap.get(DistanceSensor.class, "distanceSensorLeft");
-            distanceSensorRight = hardwareMap.get(DistanceSensor.class, "distanceSensorRight");
-        }
-
-        public  double getLeftDistance() {
-            return distanceSensorLeft.getDistance(DistanceUnit.INCH);
-        }
-
-        public  double getRightDistance() {
-            return distanceSensorRight.getDistance(DistanceUnit.INCH);
-        }
-    }
-
-    public static class transfer {
-        Intake i;
-        Outtake o;
-
-        public transfer(HardwareMap hardwaremap) {
-             i = new Intake(hardwaremap);
-             o = new Outtake(hardwaremap);
-        }
-
-        public void doTransfer() {
-            o.armTransferPos();
-            o.openClaw();
-            i.defaultRotater();
-            i.armTransferPos();
-            i.liftIn();
-            o.liftDown();
-            o.closeClaw();
-            i.openClaw();
-        }
-    }
+//    public static class DistanceSensors {
+//        private SensorREV2mDistance distanceSensorLeft;
+//        private SensorREV2mDistance distanceSensorRight;
+//
+//        public DistanceSensors(HardwareMap hardwareMap) {
+//            distanceSensorLeft = hardwareMap.get(SensorREV2mDistance.class, "distanceSensorLeft");
+//            distanceSensorRight = hardwareMap.get(SensorREV2mDistance.class, "distanceSensorRight");
+//        }
+//
+//
+//    }
 
 }

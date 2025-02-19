@@ -14,7 +14,8 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.Servo;
 
 @Config
-@Autonomous(name = "BucketAuton", group = "Autonomous")
+@Disabled
+@Autonomous(name = "Straight for the Samples", group = "Autonomous")
 public class StraightForTheSamples extends LinearOpMode {
 
 
