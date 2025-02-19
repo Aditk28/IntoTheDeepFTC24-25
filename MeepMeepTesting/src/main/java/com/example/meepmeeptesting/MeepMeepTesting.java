@@ -22,70 +22,131 @@ public class MeepMeepTesting {
         myBot.runAction(myBot.getDrive().actionBuilder(new Pose2d(-9.2, 62, Math.toRadians(-90)))
 
                 //conversion rule Auton (x, y) -- > (y - 9, -x + 62)
-                .strafeToConstantHeading(new Vector2d(-9.2, 60))
+
+
+
+                .strafeToConstantHeading(new Vector2d(-9.2, 61.2))
+
+
+
+                .waitSeconds(0.1)
+
+
 
                 //place first specimen
-                .splineToConstantHeading(new Vector2d(-4, 35), Math.toRadians(90))
+                .splineToConstantHeading(new Vector2d(-6, 35), Math.toRadians(90))
 
-                //this is the auton that goes straight for the placed samples
-//                .strafeToConstantHeading((new Vector2d(-33, 40)))
+                //open claw after drop
+
+
+                //move arm down out of way then back to pick up position
+
+
+
                 //go to the samples on the floor
-                //36
-                .splineToConstantHeading((new Vector2d(-34, 35)), Math.toRadians(270))
+                .splineToSplineHeading((new Pose2d(-25, 40, Math.toRadians(-225))), Math.toRadians(270))
 
                 //bring back first brick
-                .splineToConstantHeading(new Vector2d(-34, 14), Math.toRadians(270))
-                .splineToConstantHeading(new Vector2d(-34, 11), Math.toRadians(270))
-                .splineToConstantHeading(new Vector2d(-45, 11), Math.toRadians(90))
-                .splineToConstantHeading(new Vector2d(-45, 45), Math.toRadians(90))
+                .strafeToLinearHeading(new Vector2d(-34, 37), Math.toRadians(-125))
+                .turnTo(Math.toRadians(-225))
 
-//                bring back second brick
-                .splineToConstantHeading(new Vector2d(-45, 14), Math.toRadians(270))
-                .splineToConstantHeading(new Vector2d(-45, 9), Math.toRadians(270))
-                .splineToConstantHeading(new Vector2d(-60, 9), Math.toRadians(90))
-                .splineToConstantHeading(new Vector2d(-60, 45), Math.toRadians(90))
+                .strafeToLinearHeading(new Vector2d(-42, 37), Math.toRadians(-125))
+                .turnTo(Math.toRadians(-225))
 
-                //bring back third brick
-                .splineToConstantHeading(new Vector2d(-52, 14), Math.toRadians(270))
-                .splineToConstantHeading(new Vector2d(-52, 10), Math.toRadians(270))
-                .splineToConstantHeading(new Vector2d(-66, 14), Math.toRadians(90))
-                .splineToConstantHeading(new Vector2d(-67, 45), Math.toRadians(90))
+                .strafeToLinearHeading(new Vector2d(-52, 37), Math.toRadians(-125))
+                .turnTo(Math.toRadians(-225))
 
-                .splineToConstantHeading(new Vector2d(-60, 50), Math.toRadians(270))
-                .splineToConstantHeading(new Vector2d(-45.5, 57.5), Math.toRadians(90))
-                .waitSeconds(.1)
+                .splineToLinearHeading(new Pose2d(-49.5, 60, Math.toRadians(-90)), Math.toRadians(90))
+
+                //after reaching, close the claw picking up the second clip
+
+
+//                .waitSeconds(.1)
+
+                // then move the arm to the outtake position while robot starts moving
+
 
                 //go to submersible with the first specimen
-                .strafeToConstantHeading(new Vector2d(-8, 40))
-                .splineToConstantHeading(new Vector2d(-3, 30.5), Math.toRadians(90))
-
-                //go to pick up second clip
-                .lineToYConstantHeading(33)
-                .splineToConstantHeading(new Vector2d(-45.5, 58.6), Math.toRadians(90))
-                .waitSeconds(.1)
-
-                //go to submersible with the second picked up clip
-                .strafeToConstantHeading(new Vector2d(-7, 40))
-                .splineToConstantHeading(new Vector2d(0, 31.5), Math.toRadians(90))
-
-                //go back to pick up the third clip
-                .lineToYConstantHeading(33)
-                .splineToConstantHeading(new Vector2d(-45.5, 58.6), Math.toRadians(90))
-                .waitSeconds(.1)
-
-                //go to submersible with the third picked up clip
-                .strafeToConstantHeading(new Vector2d(-6, 40))
-                .splineToConstantHeading(new Vector2d(2, 31.5), Math.toRadians(90))
-
-                //go back to pick up the fourth clip
-                .lineToYConstantHeading(33)
-                .splineToConstantHeading(new Vector2d(-45.5, 58.6), Math.toRadians(90))
-                .waitSeconds(.1)
-
-
-                //go to submersible with the fourth picked up clip
                 .strafeToConstantHeading(new Vector2d(-10, 40))
-                .splineToConstantHeading(new Vector2d(-9, 31.5), Math.toRadians(90))
+                .splineToConstantHeading(new Vector2d(-9, 27.5), Math.toRadians(90))
+
+//                .strafeToConstantHeading(new Vector2d(-8, 40))
+//                .splineToConstantHeading(new Vector2d(-6, 29.5), Math.toRadians(90))
+
+                //open claw after second specimen has been  placed
+
+                //move arm down out of way then back to pick up position
+
+
+                //go to pick up the second specimen
+                .lineToYConstantHeading(33)
+                .splineToConstantHeading(new Vector2d(-49.5, 61), Math.toRadians(90))
+
+                //after reaching, close the claw picking up third specimen
+
+
+//                .waitSeconds(.1)
+
+                // then move the arm to the outtake position while robot starts moving
+
+
+                //go to submersible with the second specimen
+                .strafeToConstantHeading(new Vector2d(-9, 40))
+                .splineToConstantHeading(new Vector2d(-8, 27.5), Math.toRadians(90))
+
+//                .strafeToConstantHeading(new Vector2d(-7, 40))
+//                .splineToConstantHeading(new Vector2d(-4.5, 30.5), Math.toRadians(90))
+
+                //open claw after outtake
+
+
+                //reset the outtake arm
+
+
+                //go back to pick up the third specimen
+                .lineToYConstantHeading(33)
+                //og y was 58.6
+                .splineToConstantHeading(new Vector2d(-49.5, 61), Math.toRadians(90))
+
+                //close claw picking up fourth specimen
+
+
+//                .waitSeconds(.1)
+
+                //reset outtake arm after short delay
+
+
+                //go to submersible with the third specimen
+                .strafeToConstantHeading(new Vector2d(-8, 40))
+                .splineToConstantHeading(new Vector2d(-7, 27.5), Math.toRadians(90))
+
+//                .strafeToConstantHeading(new Vector2d(-6, 40))
+//                .splineToConstantHeading(new Vector2d(-3, 30.5), Math.toRadians(90))
+
+                //open claw after outtake
+
+
+                //reset outtake arm
+
+
+                //go back to pick up the fourth specimen
+                .lineToYConstantHeading(33)
+                .splineToConstantHeading(new Vector2d(-49.5, 61), Math.toRadians(90))
+
+                .strafeToConstantHeading(new Vector2d(-10, 40))
+                .splineToConstantHeading(new Vector2d(-9, 27.5), Math.toRadians(90))
+
+                .lineToYConstantHeading(33)
+                .splineToConstantHeading(new Vector2d(-49.5, 61), Math.toRadians(90))
+
+                .strafeToConstantHeading(new Vector2d(-10, 40))
+                .splineToConstantHeading(new Vector2d(-9, 27.5), Math.toRadians(90))
+
+//                .strafeToConstantHeading(new Vector2d(-5, 40))
+//                .splineToConstantHeading(new Vector2d(-1.25, 30), Math.toRadians(90))
+
+                //open claw after outtake
+
 
                 //go back to pick up the fifth clip
 //                .lineToYConstantHeading(33)
