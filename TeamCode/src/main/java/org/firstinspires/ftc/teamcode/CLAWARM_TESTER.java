@@ -175,7 +175,6 @@ public class CLAWARM_TESTER extends OpMode {
     }
     @Override
     public void loop()   {
-
         /*
         dpad left = 0.0
         dpad up = 0.1
@@ -191,37 +190,37 @@ public class CLAWARM_TESTER extends OpMode {
         */
 
         if (gamepad1.dpad_left) {
-            rotater.setPosition(0.0);
+            intakeClawRight.setPosition(0.0);
         }
         if (gamepad1.dpad_up) {
-            rotater.setPosition(0.1);
+            intakeClawRight.setPosition(0.1);
         }
         if (gamepad1.dpad_right) {
-            rotater.setPosition(0.2);
+            intakeClawRight.setPosition(0.2);
         }
         if (gamepad1.dpad_down) {
-            rotater.setPosition(0.3);
+            intakeClawRight.setPosition(0.3);
         }
         if (gamepad1.x) {
-            rotater.setPosition(0.4);
+            intakeClawRight.setPosition(0.4);
         }
         if (gamepad1.y) {
-            rotater.setPosition(0.5);
+            intakeClawRight.setPosition(0.5);
         }
         if (gamepad1.b) {
-            rotater.setPosition(0.6);
+            intakeClawRight.setPosition(0.6);
         }
         if (gamepad1.a) {
-            rotater.setPosition(0.7);
+            intakeClawRight.setPosition(0.7);
         }
         if (gamepad1.left_bumper) {
-            rotater.setPosition(0.8);
+            intakeClawRight.setPosition(0.8);
         }
         if (gamepad1.right_bumper) {
-            rotater.setPosition(0.9);
+            intakeClawRight.setPosition(0.9);
         }
         if (gamepad1.right_trigger > 0) {
-            rotater.setPosition(1.0);
+            intakeClawRight.setPosition(1.0);
         }
     }
 }

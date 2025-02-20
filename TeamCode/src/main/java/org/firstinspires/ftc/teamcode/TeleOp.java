@@ -67,7 +67,7 @@ public class TeleOp extends OpMode {
     public boolean fieldOriented = false;
 
     public static final double armTransferPos = 1.0;
-    public static final double armOuttakePos = 0.96; //1
+    public static final double armOuttakePos = 0.98; //1
     public static final double armOuttakePos2 = 1.0;
     public static final double armWallPosBack = 0.04; //2
 
@@ -78,13 +78,13 @@ public class TeleOp extends OpMode {
     public double intakeMovePosRight = ActionClass.Intake.intakeMovePos;
     public double intakeTransferPosRight = ActionClass.Intake.intakeTransferPos;
 
-    public static final double rightMoreClose = ActionClass.Intake.rightMoreClose;
+    public static final double rightOpenPos = ActionClass.Intake.rightMoreClose;
     public static final double rightClosePos = ActionClass.Intake.rightClosePos;
-    public static final double rightOpenPos = ActionClass.Intake.rightOpenPos;
+    public static final double rightMoreClose = ActionClass.Intake.rightOpenPos;
 
-    public static final double leftMoreClose = ActionClass.Intake.leftMoreClose;
+    public static final double leftOpenPos = ActionClass.Intake.leftMoreClose;
     public static final double leftClosePos = ActionClass.Intake.leftClosePos;
-    public static final double leftOpenPos = ActionClass.Intake.leftOpenPos;
+    public static final double leftMoreClose = ActionClass.Intake.leftOpenPos;
 
     public double rotaterDefault = ActionClass.Intake.rotaterDefault;
     public double rotaterTurned = ActionClass.Intake.rotaterTurned;
@@ -161,13 +161,17 @@ public class TeleOp extends OpMode {
         leftArm.setDirection(Servo.Direction.REVERSE);
         armClaw = hardwareMap.get(Servo.class, "armClaw");
         rotater = hardwareMap.get(Servo.class, "rotater");
-        outtakeRotater = hardwareMap.get(Servo.class, "outtakeRotater");
+        outtakeRotater = hardwareMap.get(Servo.class,   "outtakeRotater");
         intakeRightArm = hardwareMap.get(Servo.class, "intakeRightArm"); //og
         intakeLeftArm = hardwareMap.get(Servo.class, "intakeLeftArm");
         intakeLeftArm.setDirection(Servo.Direction.REVERSE);
+
+
         intakeClawRight = hardwareMap.get(Servo.class, "intakeClawRight");
         intakeClawLeft = hardwareMap.get(Servo.class, "intakeClawLeft");
         intakeClawLeft.setDirection(Servo.Direction.REVERSE);
+
+
         rightSusServo = hardwareMap.get(Servo.class, "rightSusServo");
         leftSusServo = hardwareMap.get(Servo.class, "leftSusServo");
         intake = new ActionClass.Intake(hardwareMap);
@@ -353,6 +357,7 @@ public class TeleOp extends OpMode {
                 armClaw.setPosition(armClawOpen);
                 outtakeRotater.setPosition(outtakeRotaterPickup);
                 rightArm.setPosition(armWallPosBack);
+                leftArm.setPosition(armWallPosBack);
             }
             else if (gamepad1.y) {
                 armClaw.setPosition(armClawClose);
@@ -363,6 +368,7 @@ public class TeleOp extends OpMode {
                 }
                 outtakeRotater.setPosition(outtakeRotaterOuttake);
                 rightArm.setPosition(armOuttakePos);
+                leftArm.setPosition(armOuttakePos);
             }
 
             //rotater to preset position

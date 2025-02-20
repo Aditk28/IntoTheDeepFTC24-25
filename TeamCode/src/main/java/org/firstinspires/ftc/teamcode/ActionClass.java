@@ -27,7 +27,7 @@ public class ActionClass {
         private Servo sweeper;
 
         public static final double intakeGrabPos = 0.03;
-        public static final double intakeMovePos = 0.29;
+        public static final double intakeMovePos = 0.35;
         public static final double intakeTransferPos = 0.75;
 
         public static final double rightMoreClose = 0.7;
@@ -232,9 +232,9 @@ public class ActionClass {
         public static final double halfCLosed = .34; // .34
         public static final double openPos = .31; // .33
         public static final double armTransferPos = 1.0;
-        public static final double armOuttakePos = 0.93; //1
+        public static final double armOuttakePos = 0.96; //1
         public static final double armOuttakePos2 = 1.0;
-        public static final double armWallPosBack = 0.00; //2
+        public static final double armWallPosBack = 0.04; //2
 
         public static final double armWallPos = .93;
         public static final double outtakeRotaterPickup = .74;
@@ -433,25 +433,25 @@ public class ActionClass {
         }
     }
 
-    public static class transfer {
-        Intake i;
-        Outtake o;
-
-        public transfer(HardwareMap hardwaremap) {
-             i = new Intake(hardwaremap);
-             o = new Outtake(hardwaremap);
-        }
-
-        public void doTransfer() {
-            o.armTransferPos();
-            o.openClaw();
-            i.defaultRotater();
-            i.armTransferPos();
-            i.liftIn();
-            o.liftDown();
-            o.closeClaw();
-            i.openClaw();
-        }
-    }
+//    public static class transfer {
+//        Intake i;
+//        Outtake o;
+//
+//        public transfer(HardwareMap hardwaremap) {
+//             i = new Intake(hardwaremap);
+//             o = new Outtake(hardwaremap);
+//        }
+//
+//        public void doTransfer() {
+//            o.armTransferPos();
+//            o.openClaw();
+//            i.defaultRotater();
+//            i.armTransferPos();
+//            i.liftIn();
+//            o.liftDown();
+//            o.closeClaw();
+//            i.openClaw();
+//        }
+//    }
 
 }
