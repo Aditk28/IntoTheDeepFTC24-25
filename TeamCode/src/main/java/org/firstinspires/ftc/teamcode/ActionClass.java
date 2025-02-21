@@ -28,19 +28,19 @@ public class ActionClass {
         private Servo sweeper;
 
         private RevColorSensorV3 colorSensor;
-        public static final double intakeGrabPos = 0.00;
-        public static final double intakeMovePos = 0.3;
+        public static final double intakeGrabPos = 0.03;
+        public static final double intakeMovePos = 0.35;
         public static final double intakeTransferPos = 0.75;
 
-        public static final double rightMoreClose = 0.85;
-        public static final double rightClosePos = 0.65;
-        public static final double rightOpenPos = 0.55;
+        public static final double rightMoreClose = 0.7;
+        public static final double rightClosePos = 0.55;
+        public static final double rightOpenPos = 0.0;
 
-        public static final double leftMoreClose = 0.85;
-        public static final double leftClosePos = 0.7;
-        public static final double leftOpenPos = 0.65;
-        public static final double rotaterDefault = 0.35;
-        public static final double rotaterTurned = 0.0; //.35
+        public static final double leftMoreClose = 0.7;
+        public static final double leftClosePos = 0.6;
+        public static final double leftOpenPos = 0.35;
+        public static final double rotaterDefault = 0.7;
+        public static final double rotaterTurned = 1.0; //.35
 
         public static final double sweeperInPos = .8;
 
@@ -156,15 +156,13 @@ public class ActionClass {
                     // true causes the action to rerun
 
                     //if a color is detected, stop
-                    if (color == Color.BLUE) {
+                    if (color.equals(Color.BLUE)) {
                         if (colorSensor.blue() > 500) {
-                            lift.setPower(0);
                             return false;
                         }
                     }
-                    else if (color == Color.RED) {
+                    else if (color.equals(Color.RED)) {
                         if (colorSensor.red() > 500) {
-                            lift.setPower(0);
                             return false;
                         }
                     }
@@ -200,21 +198,9 @@ public class ActionClass {
 
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
-                // powers on motor, if it is not on
-                lift.setPower(-.8);
-
-                // checks lift's current position
-                double currentPosition = lift.getCurrentPosition();
-                packet.put("liftPos", currentPosition);
-
-                if (currentPosition > pos) {
-                    // true causes the action to rerun
-                    return true;
-                } else {
-                    // false stops action rerun
-                    lift.setPower(0);
-                    return false;
-                }
+                lift.setTargetPosition(pos);
+                lift.setPower(1);
+                return false;
             }
         }
 
@@ -261,10 +247,10 @@ public class ActionClass {
         public static final double almostClosedPos = .37; // .37
         public static final double halfCLosed = .34; // .34
         public static final double openPos = .31; // .33
-        public static final double armTransferPos = 1.0;
-        public static final double armOuttakePos = 0.775; //1
-        public static final double armOuttakePos2 = 0.9;
-        public static final double armWallPosBack = 0.275; //2
+        public static final double armTransferPos = .9;
+        public static final double armOuttakePos = 0.6; //1
+        public static final double armOuttakePos2 = .7;
+        public static final double armWallPosBack = 0.2; //2
 
         public static final double armWallPos = .93;
         public static final double outtakeRotaterPickup = .74;
@@ -274,6 +260,8 @@ public class ActionClass {
         public Outtake(HardwareMap hardwareMap){
             leftVerticalLift = hardwareMap.get(DcMotorEx.class, "leftVerticalLift");
             rightVerticalLift = hardwareMap.get(DcMotorEx.class, "rightVerticalLift");
+            rightVerticalLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            leftVerticalLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             claw = hardwareMap.get(Servo.class, "armClaw");
             rightArm = hardwareMap.get(Servo.class, "rightArm"); // og
             leftArm = hardwareMap.get(Servo.class, "leftArm");
