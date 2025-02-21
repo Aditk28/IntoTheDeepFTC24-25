@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
+import android.util.Size;
+
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.ParallelAction;
 import com.acmerobotics.roadrunner.Pose2d;
@@ -11,11 +13,22 @@ import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.vision.VisionPortal;
+import org.firstinspires.ftc.vision.opencv.ColorBlobLocatorProcessor;
+import org.firstinspires.ftc.vision.opencv.ColorRange;
+import org.firstinspires.ftc.vision.opencv.ImageRegion;
+import org.opencv.core.RotatedRect;
+
+import java.util.List;
+
 @Config
 @Autonomous(name = "6 SPEC AUTON", group = "Autonomous")
 public class Spec6Auton extends LinearOpMode {
 
 
+    private ActionClass.Intake.Color color;
     @Override
     public void runOpMode() throws InterruptedException {
 
@@ -23,6 +36,47 @@ public class Spec6Auton extends LinearOpMode {
         Pose2d initialPose = new Pose2d(-9.2, 62, Math.toRadians(-90));
         MecanumDrive drive = new MecanumDrive(hardwareMap, initialPose);
 
+        ColorBlobLocatorProcessor colorLocator = new ColorBlobLocatorProcessor.Builder()
+                .setTargetColorRange(ColorRange.BLUE)         // use a predefined color match
+                .setContourMode(ColorBlobLocatorProcessor.ContourMode.EXTERNAL_ONLY)    // exclude blobs inside blobs
+                .setRoi(ImageRegion.asUnityCenterCoordinates(-0.5, 0.5, 0.5, -0.5))  // search central 1/4 of camera view
+                .setDrawContours(true)                        // Show contours on the Stream Preview
+                .setBlurSize(5)                               // Smooth the transitions between different colors in image
+                .build();
+
+        VisionPortal portal = new VisionPortal.Builder()
+                .addProcessor(colorLocator)
+                .setCameraResolution(new Size(320, 240))
+                .setCamera(hardwareMap.get(WebcamName.class, "Webcam 1"))
+                .build();
+
+        telemetry.setMsTransmissionInterval(50);   // Speed up telemetry updates, Just use for debugging.
+        telemetry.setDisplayFormat(Telemetry.DisplayFormat.MONOSPACE);
+
+
+        telemetry.addData("preview on/off", "... Camera Stream\n");
+
+        color = ActionClass.Intake.Color.BLUE;
+        if (gamepad1.x) {
+            color = ActionClass.Intake.Color.BLUE;
+        }
+        else if (gamepad1.b) {
+            color = ActionClass.Intake.Color.RED;
+        }
+
+        List<ColorBlobLocatorProcessor.Blob> blobs = colorLocator.getBlobs();
+
+        ColorBlobLocatorProcessor.Util.filterByArea(50, 20000, blobs);
+
+        for(ColorBlobLocatorProcessor.Blob b : blobs)
+        {
+            RotatedRect boxFit = b.getBoxFit();
+            telemetry.addLine(String.format("%5d  %4.2f   %5.2f  (%3d,%3d)",
+                    b.getContourArea(), b.getDensity(), b.getAspectRatio(), (int) boxFit.center.x, (int) boxFit.center.y));
+        }
+
+        telemetry.addData("Going for color:", this.color.toString());
+        telemetry.update();
         ActionClass.Intake intake = new ActionClass.Intake(hardwareMap);
         ActionClass.Outtake outtake = new ActionClass.Outtake(hardwareMap);
 
@@ -30,11 +84,10 @@ public class Spec6Auton extends LinearOpMode {
 
         TrajectoryActionBuilder auto = drive.actionBuilder(initialPose)
 
-                .afterTime(0, new SequentialAction(
-                        outtake.halfClosed()
+                .afterTime(0, new ParallelAction(
+                        outtake.closeClaw(),
+                        outtake.armOuttakePos()
                 ))
-                .strafeToConstantHeading(new Vector2d(-9.2, 61.2))
-
 
 
                 .waitSeconds(0.1)
@@ -42,7 +95,7 @@ public class Spec6Auton extends LinearOpMode {
 
 
                 //place first specimen
-                .splineToConstantHeading(new Vector2d(-6, 35), Math.toRadians(90))
+                .lineToYConstantHeading(35)
 
                 //open claw after drop
 
@@ -54,10 +107,19 @@ public class Spec6Auton extends LinearOpMode {
                 //go to the samples on the floor
                 .splineToSplineHeading((new Pose2d(-25, 40, Math.toRadians(-225))), Math.toRadians(270))
 
+                .afterTime(0, new SequentialAction(
+                        intake.liftOut(1500, this.color),
+                        new SleepAction(3),
+                        intake.closeClaw()
+
+
+                ))
+                .waitSeconds(3)
                 //sweep first brick
                 .afterTime(0.0, new SequentialAction(
-                        intake.sweeperOut()
+                        intake.sweeperIn()
                 ))
+
                 .strafeToLinearHeading(new Vector2d(-34, 37), Math.toRadians(-125))
                 .turnTo(Math.toRadians(-225))
                 .afterTime(0.0, new SequentialAction(

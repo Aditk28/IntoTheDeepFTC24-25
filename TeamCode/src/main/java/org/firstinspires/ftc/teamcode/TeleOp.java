@@ -10,13 +10,17 @@ import com.acmerobotics.roadrunner.SequentialAction;
 import com.acmerobotics.roadrunner.SleepAction;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.qualcomm.hardware.ams.AMSColorSensor;
+import com.qualcomm.hardware.rev.RevColorSensorV3;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
+import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
+
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -56,6 +60,8 @@ public class TeleOp extends OpMode {
 
     public ActionClass.DistanceSensors distanceSensors;
 
+    public RevColorSensorV3 colorSensor;
+
     //Reduces speed when true
     public boolean turtleMode = false;
 
@@ -67,9 +73,9 @@ public class TeleOp extends OpMode {
     public boolean fieldOriented = false;
 
     public static final double armTransferPos = 1.0;
-    public static final double armOuttakePos = 0.98; //1
-    public static final double armOuttakePos2 = 1.0;
-    public static final double armWallPosBack = 0.04; //2
+    public static final double armOuttakePos = 0.775; //1
+    public static final double armOuttakePos2 = 0.9;
+    public static final double armWallPosBack = 0.275; //2
 
     public double armClawClose = ActionClass.Outtake.grabPos;
     public double armClawOpen = ActionClass.Outtake.openPos;
@@ -177,6 +183,8 @@ public class TeleOp extends OpMode {
         intake = new ActionClass.Intake(hardwareMap);
         outtake = new ActionClass.Outtake(hardwareMap);
         distanceSensors = new ActionClass.DistanceSensors(hardwareMap);
+        colorSensor = hardwareMap.get(RevColorSensorV3.class, "colorSensor");
+        colorSensor.enableLed(true);
 
         //resetting encoders cause why not
         leftVerticalLift.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
@@ -427,25 +435,27 @@ public class TeleOp extends OpMode {
             }
 
             //intakeClawRight
-            if (gamepad1.x || gamepad2.x) {
-                intakeClawRight.setPosition(rightMoreClose);
-                intakeClawLeft.setPosition(leftMoreClose);
-                try {
-                    Thread.sleep(30);
-                } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
+
+                if (gamepad1.x || gamepad2.x) {
+                    intakeRightArm.setPosition(intakeGrabPosRight);
+                    intakeLeftArm.setPosition(intakeGrabPosRight);
+                    try {
+                        Thread.sleep(70);
+                    } catch (InterruptedException e) {
+                        throw new RuntimeException(e);
+                    }
+                    intakeClawRight.setPosition(rightMoreClose);
+                    intakeClawLeft.setPosition(leftMoreClose);
+                    try {
+                        Thread.sleep(250);
+                    } catch (InterruptedException e) {
+                        throw new RuntimeException(e);
+                    }
+                    intakeRightArm.setPosition(intakeMovePosRight + 0.04);
+                    intakeLeftArm.setPosition(intakeMovePosRight + 0.04);
                 }
-                intakeRightArm.setPosition(intakeGrabPosRight);
-                intakeLeftArm.setPosition(intakeGrabPosRight);
-                try {
-                    Thread.sleep(200);
-                } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
-                }
-                intakeRightArm.setPosition(intakeMovePosRight + 0.04);
-                intakeLeftArm.setPosition(intakeMovePosRight + 0.04);
-            }
-            else if (gamepad1.b || gamepad2.b) {
+
+            if (gamepad1.b || gamepad2.b) {
                 intakeClawRight.setPosition(rightOpenPos);
                 intakeClawLeft.setPosition(leftOpenPos);
                 intakeRightArm.setPosition(intakeMovePosRight);
@@ -519,11 +529,11 @@ public class TeleOp extends OpMode {
 
         //telemetry data
         telemetry.addData("Status", "Run Time: " + runtime.toString());
-        telemetry.addData("DriveMode: ", (turtleMode) ? ("turtleMode") : ("Normal"));
-        telemetry.addData("DriveType: ", (fieldOriented) ? ("Field-Oriented Drive") : ("Robot-Oriented"));
-        telemetry.addData("rightLiftMotorPosition", rightVerticalLift.getCurrentPosition());
-        telemetry.addData("leftLiftMotorPosition", leftVerticalLift.getCurrentPosition());
-        telemetry.addData("horizontalliftMotorPosition", horizontalLift.getCurrentPosition());
+//        telemetry.addData("DriveMode: ", (turtleMode) ? ("turtleMode") : ("Normal"));
+//        telemetry.addData("DriveType: ", (fieldOriented) ? ("Field-Oriented Drive") : ("Robot-Oriented"));
+//        telemetry.addData("rightLiftMotorPosition", rightVerticalLift.getCurrentPosition());
+//        telemetry.addData("leftLiftMotorPosition", leftVerticalLift.getCurrentPosition());
+//        telemetry.addData("horizontalliftMotorPosition", horizontalLift.getCurrentPosition());
         telemetry.addData("rightArmServoPos", rightArm.getPosition());
 //        telemetry.addData("intakeClawRightPosition", intakeClawRight.getPosition());
         telemetry.addData("intakeRightArmPosition", intakeRightArm.getPosition());
@@ -531,6 +541,9 @@ public class TeleOp extends OpMode {
         telemetry.addData("gamepad2 left stick x and y: ", gamepad2.left_stick_x + " " + gamepad2.left_stick_y);
         telemetry.addData("Distance sensor left: ", distanceSensors.getLeftDistance());
         telemetry.addData("Distance sensor right: ", distanceSensors.getRightDistance());
+        telemetry.addData("Blue  ", colorSensor.blue());
+        telemetry.addData("Red ", colorSensor.red());
+        telemetry.addData("distance ", colorSensor.getDistance(DistanceUnit.INCH));
     }
 }
 

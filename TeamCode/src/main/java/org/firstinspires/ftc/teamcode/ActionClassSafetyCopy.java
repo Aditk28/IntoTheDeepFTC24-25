@@ -4,8 +4,6 @@ import androidx.annotation.NonNull;
 
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
-import com.qualcomm.hardware.rev.RevColorSensorV3;
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -14,7 +12,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 
-public class ActionClass {
+public class ActionClassSafetyCopy {
 
     public static class Intake{
         private DcMotorEx lift;
@@ -27,20 +25,19 @@ public class ActionClass {
         private Servo intakeClawLeft;
         private Servo sweeper;
 
-        private RevColorSensorV3 colorSensor;
-        public static final double intakeGrabPos = 0.00;
-        public static final double intakeMovePos = 0.3;
+        public static final double intakeGrabPos = 0.03;
+        public static final double intakeMovePos = 0.35;
         public static final double intakeTransferPos = 0.75;
 
-        public static final double rightMoreClose = 0.85;
-        public static final double rightClosePos = 0.65;
-        public static final double rightOpenPos = 0.55;
+        public static final double rightMoreClose = 0.7;
+        public static final double rightClosePos = 0.55;
+        public static final double rightOpenPos = 0.0;
 
-        public static final double leftMoreClose = 0.85;
-        public static final double leftClosePos = 0.7;
-        public static final double leftOpenPos = 0.65;
-        public static final double rotaterDefault = 0.35;
-        public static final double rotaterTurned = 0.0; //.35
+        public static final double leftMoreClose = 0.7;
+        public static final double leftClosePos = 0.6;
+        public static final double leftOpenPos = 0.35;
+        public static final double rotaterDefault = 0.7;
+        public static final double rotaterTurned = 1.0; //.35
 
         public static final double sweeperInPos = .8;
 
@@ -59,8 +56,6 @@ public class ActionClass {
             intakeClawLeft = hardwareMap.get(Servo.class, "intakeClawLeft");
             intakeClawLeft.setDirection(Servo.Direction.REVERSE);
             sweeper = hardwareMap.get(Servo.class, "sweeper");
-            colorSensor = hardwareMap.get(RevColorSensorV3.class, "colorSensor");
-            colorSensor.enableLed(true);
         }
 
         public class sweeper implements Action{
@@ -123,20 +118,12 @@ public class ActionClass {
             return new Rotater(rotaterTurned);
         }
 
-        public enum Color {
-            NONE,
-            RED,
-            BLUE
-        }
         public class LiftOut implements Action {
             // checks if the lift motor has been powered on
             private boolean initialized = false;
             private int pos;
-            private Color color;
-
-            public LiftOut(int pos, Color color) {
+            public LiftOut(int pos) {
                 this.pos = pos;
-                this.color = color;
             }
 
             // actions are formatted via telemetry packets as below
@@ -144,7 +131,7 @@ public class ActionClass {
             public boolean run(@NonNull TelemetryPacket packet) {
                 // powers on motor, if it is not on
                 if (!initialized) {
-                    lift.setPower(.8);
+                    lift.setPower(0.8);
                     initialized = true;
                 }
 
@@ -154,21 +141,6 @@ public class ActionClass {
 
                 if (currentPosition < pos) {
                     // true causes the action to rerun
-
-                    //if a color is detected, stop
-                    if (color == Color.BLUE) {
-                        if (colorSensor.blue() > 500) {
-                            lift.setPower(0);
-                            return false;
-                        }
-                    }
-                    else if (color == Color.RED) {
-                        if (colorSensor.red() > 500) {
-                            lift.setPower(0);
-                            return false;
-                        }
-                    }
-
                     return true;
                 } else {
                     // false stops action rerun
@@ -185,13 +157,11 @@ public class ActionClass {
 
         }
         public Action liftOut(int pos) {
-            return new LiftOut(pos, Color.NONE);
-        }
-        public Action liftOut(int pos, Color color) {
-            return new LiftOut(pos, color);
+            return new LiftOut(pos);
         }
 
         public class LiftIn implements Action {
+            private boolean initialized = false;
             private int pos;
             public LiftIn(int pos) {
                 this.pos = pos;
@@ -200,18 +170,17 @@ public class ActionClass {
 
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
-                // powers on motor, if it is not on
-                lift.setPower(-.8);
+                if (!initialized) {
+                    lift.setPower(-0.8);
+                    initialized = true;
+                }
 
-                // checks lift's current position
                 double currentPosition = lift.getCurrentPosition();
                 packet.put("liftPos", currentPosition);
 
                 if (currentPosition > pos) {
-                    // true causes the action to rerun
                     return true;
                 } else {
-                    // false stops action rerun
                     lift.setPower(0);
                     return false;
                 }
@@ -261,10 +230,10 @@ public class ActionClass {
         public static final double almostClosedPos = .37; // .37
         public static final double halfCLosed = .34; // .34
         public static final double openPos = .31; // .33
-        public static final double armTransferPos = 1.0;
-        public static final double armOuttakePos = 0.775; //1
-        public static final double armOuttakePos2 = 0.9;
-        public static final double armWallPosBack = 0.275; //2
+        public static final double armTransferPos = 0.9;
+        public static final double armOuttakePos = 0.6; //1
+        public static final double armOuttakePos2 = 0.7;
+        public static final double armWallPosBack = 0.2; //2
 
         public static final double armWallPos = .93;
         public static final double outtakeRotaterPickup = .74;
