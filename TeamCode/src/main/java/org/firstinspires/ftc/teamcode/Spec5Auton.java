@@ -40,7 +40,9 @@ public class Spec5Auton extends LinearOpMode {
 
                 //open claw after drop
                 .afterTime(0, new ParallelAction(
-                        outtake.halfClosed(),
+                        outtake.openClaw(),
+                        outtake.armOuttakePos2(),
+                        new SleepAction(0.1),
                         outtake.armWallPosBack()
                 ))
 
@@ -62,18 +64,20 @@ public class Spec5Auton extends LinearOpMode {
                 //bring back third brick
                 .splineToConstantHeading(new Vector2d(-58, 14), Math.toRadians(270))
                 .splineToConstantHeading(new Vector2d(-58, 8), Math.toRadians(270))
-                .splineToConstantHeading(new Vector2d(-72, 14), Math.toRadians(90))
-                .splineToConstantHeading(new Vector2d(-72, 45), Math.toRadians(90))
+                .splineToConstantHeading(new Vector2d(-71, 14), Math.toRadians(90))
+                .splineToConstantHeading(new Vector2d(-71, 45), Math.toRadians(90))
 
                 //going to the pickup location
                 .splineToConstantHeading(new Vector2d(-60, 45), Math.toRadians(270))
-                .splineToConstantHeading(new Vector2d(-49.5, 60), Math.toRadians(90))
+                .splineToConstantHeading(new Vector2d(-49.5, 60.25), Math.toRadians(90))
 
                 //after reaching, close the claw picking up the second specimen
 
                 .afterTime(0, new SequentialAction(
                         outtake.closeClaw()
                 ))
+
+                .waitSeconds(0.1)
 
                 // then move the arm to the outtake position while robot starts moving
                 .afterTime(0, new SequentialAction(
@@ -89,20 +93,22 @@ public class Spec5Auton extends LinearOpMode {
 
                 //open claw after second specimen has been placed
                 .afterTime(0, new ParallelAction(
-                        outtake.halfClosed(),
+                        outtake.openClaw(),
+                        outtake.armOuttakePos2(),
+                        new SleepAction(0.1),
                         outtake.armWallPosBack()
                 ))
 
                 //go to pick up the third specimen
                 .lineToYConstantHeading(33)
-                .splineToConstantHeading(new Vector2d(-49.5, 61), Math.toRadians(90))
+                .splineToConstantHeading(new Vector2d(-49.5, 61.25), Math.toRadians(90))
 
                 //after reaching, close the claw picking up third specimen
                 .afterTime(0, new SequentialAction(
                         outtake.closeClaw()
                 ))
 
-//                .waitSeconds(.1)
+                .waitSeconds(.1)
 
                 // then move the arm to the outtake position while robot starts moving
                 .afterTime(0.0, new SequentialAction(
@@ -118,21 +124,23 @@ public class Spec5Auton extends LinearOpMode {
 
                 //open claw after outtake
                 .afterTime(0, new ParallelAction(
-                        outtake.halfClosed(),
+                        outtake.openClaw(),
+                        outtake.armOuttakePos2(),
+                        new SleepAction(0.1),
                         outtake.armWallPosBack()
                 ))
 
                 //go back to pick up the fourth specimen
                 .lineToYConstantHeading(33)
                 //og y was 58.6
-                .splineToConstantHeading(new Vector2d(-49.5, 61), Math.toRadians(90))
+                .splineToConstantHeading(new Vector2d(-49.5, 61.25), Math.toRadians(90))
 
                 //close claw picking up fourth specimen
                 .afterTime(0, new SequentialAction(
                         outtake.closeClaw()
                 ))
 
-//                .waitSeconds(.1)
+                .waitSeconds(.1)
 
                 //reset outtake arm after short delay
                 .afterTime(0, new SequentialAction(
@@ -146,22 +154,23 @@ public class Spec5Auton extends LinearOpMode {
 //                .strafeToConstantHeading(new Vector2d(-6, 40))
 //                .splineToConstantHeading(new Vector2d(-3, 30.5), Math.toRadians(90))
 
-                //open claw after outtake
                 .afterTime(0, new ParallelAction(
-                        outtake.halfClosed(),
+                        outtake.openClaw(),
+                        outtake.armOuttakePos2(),
+                        new SleepAction(0.1),
                         outtake.armWallPosBack()
                 ))
 
                 //go back to pick up the fifth specimen
                 .lineToYConstantHeading(33)
-                .splineToConstantHeading(new Vector2d(-49.5, 61), Math.toRadians(90))
+                .splineToConstantHeading(new Vector2d(-49.5, 61.25), Math.toRadians(90))
 
                 //pick up fifth specimen
                 .afterTime(0, new SequentialAction(
                         outtake.closeClaw()
                 ))
 
-//                .waitSeconds(.1)
+                .waitSeconds(.1)
 
                 .afterTime(0.0, new SequentialAction(
                         outtake.armOuttakePos()
@@ -176,7 +185,7 @@ public class Spec5Auton extends LinearOpMode {
 
                 //open claw after outtake
                 .afterTime(0, new SequentialAction(
-                        outtake.halfClosed()
+                        outtake.openClaw()
                 ));
 
         waitForStart();

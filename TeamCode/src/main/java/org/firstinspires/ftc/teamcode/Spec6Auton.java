@@ -27,121 +27,155 @@ import java.util.List;
 @Autonomous(name = "6 SPEC AUTON", group = "Autonomous")
 public class Spec6Auton extends LinearOpMode {
 
-
+    public int Xchange;
     private ActionClass.Intake.Color color;
     @Override
     public void runOpMode() throws InterruptedException {
 
         // instantiate your MecanumDrive at a particular pose.
-        Pose2d initialPose = new Pose2d(-9.2, 62, Math.toRadians(-90));
+        Pose2d initialPose = new Pose2d(-4.2, 62, Math.toRadians(-90));
         MecanumDrive drive = new MecanumDrive(hardwareMap, initialPose);
 
-        ColorBlobLocatorProcessor colorLocator = new ColorBlobLocatorProcessor.Builder()
-                .setTargetColorRange(ColorRange.BLUE)         // use a predefined color match
-                .setContourMode(ColorBlobLocatorProcessor.ContourMode.EXTERNAL_ONLY)    // exclude blobs inside blobs
-                .setRoi(ImageRegion.asUnityCenterCoordinates(-0.5, 0.5, 0.5, -0.5))  // search central 1/4 of camera view
-                .setDrawContours(true)                        // Show contours on the Stream Preview
-                .setBlurSize(5)                               // Smooth the transitions between different colors in image
-                .build();
+//        ColorBlobLocatorProcessor colorLocator = new ColorBlobLocatorProcessor.Builder()
+//                .setTargetColorRange(ColorRange.BLUE)         // use a predefined color match
+//                .setContourMode(ColorBlobLocatorProcessor.ContourMode.EXTERNAL_ONLY)    // exclude blobs inside blobs
+//                .setRoi(ImageRegion.asUnityCenterCoordinates(-0.5, 0.5, 0.5, -0.5))  // search central 1/4 of camera view
+//                .setDrawContours(true)                        // Show contours on the Stream Preview
+//                .setBlurSize(5)                               // Smooth the transitions between different colors in image
+//                .build();
+//
+//        VisionPortal portal = new VisionPortal.Builder()
+//                .addProcessor(colorLocator)
+//                .setCameraResolution(new Size(320, 240))
+//                .setCamera(hardwareMap.get(WebcamName.class, "Webcam 1"))
+//                .build();
+//
+//        telemetry.setMsTransmissionInterval(50);   // Speed up telemetry updates, Just use for debugging.
+//        telemetry.setDisplayFormat(Telemetry.DisplayFormat.MONOSPACE);
+//
+//
+//        telemetry.addData("preview on/off", "... Camera Stream\n");
+//
+//        color = ActionClass.Intake.Color.BLUE;
+//        if (gamepad1.x) {
+//            color = ActionClass.Intake.Color.BLUE;
+//        }
+//        else if (gamepad1.b) {
+//            color = ActionClass.Intake.Color.RED;
+//        }
+//
+//        List<ColorBlobLocatorProcessor.Blob> blobs = colorLocator.getBlobs();
+//
+//        ColorBlobLocatorProcessor.Util.filterByArea(50, 20000, blobs);
+//
+//        for(ColorBlobLocatorProcessor.Blob b : blobs)
+//        {
+//            RotatedRect boxFit = b.getBoxFit();
+//            telemetry.addLine(String.format("%5d  %4.2f   %5.2f  (%3d,%3d)",
+//                    b.getContourArea(), b.getDensity(), b.getAspectRatio(), (int) boxFit.center.x, (int) boxFit.center.y));
+//        }
 
-        VisionPortal portal = new VisionPortal.Builder()
-                .addProcessor(colorLocator)
-                .setCameraResolution(new Size(320, 240))
-                .setCamera(hardwareMap.get(WebcamName.class, "Webcam 1"))
-                .build();
-
-        telemetry.setMsTransmissionInterval(50);   // Speed up telemetry updates, Just use for debugging.
-        telemetry.setDisplayFormat(Telemetry.DisplayFormat.MONOSPACE);
-
-
-        telemetry.addData("preview on/off", "... Camera Stream\n");
-
-        color = ActionClass.Intake.Color.BLUE;
-        if (gamepad1.x) {
-            color = ActionClass.Intake.Color.BLUE;
-        }
-        else if (gamepad1.b) {
-            color = ActionClass.Intake.Color.RED;
-        }
-
-        List<ColorBlobLocatorProcessor.Blob> blobs = colorLocator.getBlobs();
-
-        ColorBlobLocatorProcessor.Util.filterByArea(50, 20000, blobs);
-
-        for(ColorBlobLocatorProcessor.Blob b : blobs)
-        {
-            RotatedRect boxFit = b.getBoxFit();
-            telemetry.addLine(String.format("%5d  %4.2f   %5.2f  (%3d,%3d)",
-                    b.getContourArea(), b.getDensity(), b.getAspectRatio(), (int) boxFit.center.x, (int) boxFit.center.y));
-        }
-
-        telemetry.addData("Going for color:", this.color.toString());
-        telemetry.update();
         ActionClass.Intake intake = new ActionClass.Intake(hardwareMap);
         ActionClass.Outtake outtake = new ActionClass.Outtake(hardwareMap);
-
-        Actions.runBlocking(outtake.closeClaw()); // ROBOT MOVES ON INITIALIZATION
+        ActionClass.setTelemetry(telemetry);
+        Actions.runBlocking(outtake.closeClaw());// ROBOT MOVES ON INITIALIZATION
 
         TrajectoryActionBuilder auto = drive.actionBuilder(initialPose)
 
-                .afterTime(0, new ParallelAction(
-                        outtake.closeClaw(),
-                        outtake.armOuttakePos()
+//                .afterTime(0, new ParallelAction(
+////                        outtake.closeClaw(),
+////                        outtake.armOuttakePos(),
+//                        intake.armMovePos(),
+//                        intake.openClaw(),
+//                        intake.sweeperIn()
+//                ))
+//
+//
+//                .waitSeconds(0.1)
+//
+//
+                .afterTime(0, new SequentialAction(
+                        intake.armMovePos()
                 ))
-
-
-                .waitSeconds(0.1)
-
-
-
-                //place first specimen
                 .lineToYConstantHeading(35)
 
-                //open claw after drop
+                .afterTime(0, new SequentialAction(
+                        intake.liftOut(800),
+                        intake.armGrabPos(),
+                        new SleepAction(.07),
+                        intake.closeClaw(),
+                        new SleepAction(.25),
+                        intake.armMovePos()
 
 
-                //move arm down out of way then back to pick up position
+                ))
+                .waitSeconds(3)
+                .afterTime(0, new SequentialAction(
+                        intake.liftIn(0)
 
+                ))
 
+                .lineToYConstantHeading(45)
+
+                .afterTime(0, new SequentialAction(
+                        new SleepAction(3),
+                        intake.liftOut()
+                ))
 
                 //go to the samples on the floor
                 .splineToSplineHeading((new Pose2d(-25, 40, Math.toRadians(-225))), Math.toRadians(270))
 
                 .afterTime(0, new SequentialAction(
-                        intake.liftOut(1500, this.color),
-                        new SleepAction(3),
-                        intake.closeClaw()
-
-
+                        intake.openClaw()
                 ))
-                .waitSeconds(3)
+
                 //sweep first brick
                 .afterTime(0.0, new SequentialAction(
                         intake.sweeperIn()
                 ))
 
                 .strafeToLinearHeading(new Vector2d(-34, 37), Math.toRadians(-125))
+
+                .afterTime(0.0, new SequentialAction(
+                        intake.sweeperOut()
+                ))
+
+                .waitSeconds(0.1)
+
                 .turnTo(Math.toRadians(-225))
+
                 .afterTime(0.0, new SequentialAction(
                         intake.sweeperIn()
                 ))
 
                 //sweep second brick
+
+                .strafeToLinearHeading(new Vector2d(-42, 37), Math.toRadians(-125))
+
                 .afterTime(0.0, new SequentialAction(
                         intake.sweeperOut()
                 ))
-                .strafeToLinearHeading(new Vector2d(-42, 37), Math.toRadians(-125))
+
+                .waitSeconds(0.1)
+
                 .turnTo(Math.toRadians(-225))
+
                 .afterTime(0.0, new SequentialAction(
                         intake.sweeperIn()
                 ))
 
                 //sweep third brick
+
+                .strafeToLinearHeading(new Vector2d(-52, 37), Math.toRadians(-125))
+
                 .afterTime(0.0, new SequentialAction(
                         intake.sweeperOut()
                 ))
-                .strafeToLinearHeading(new Vector2d(-52, 37), Math.toRadians(-125))
+
+                .waitSeconds(0.1)
+
                 .turnTo(Math.toRadians(-225))
+
                 .afterTime(0.0, new SequentialAction(
                         intake.sweeperIn()
                 ))
@@ -305,10 +339,32 @@ public class Spec6Auton extends LinearOpMode {
                 .lineToYConstantHeading(33)
                 .splineToConstantHeading(new Vector2d(-49.5, 61), Math.toRadians(90));
 
-        waitForStart();
-        if (isStopRequested()) return;
 
-        //AUTONOMOUS START
+        while (!isStarted()) {
+            intake.setColorToDetect(ActionClass.Intake.Color.NONE);
+            if (gamepad1.x) {
+                intake.setColorToDetect(ActionClass.Intake.Color.BLUE);
+                telemetry.addData("Switched to detect: ", "BLUE");
+            }
+            else if (gamepad1.b) {
+                intake.setColorToDetect(ActionClass.Intake.Color.RED);
+                telemetry.addData("Switched to detect: ", "RED");
+            }
+            telemetry.update();
+
+            if (gamepad1.dpad_left) {
+                Xchange -= 1;
+            }
+            if (gamepad1.dpad_right) {
+                Xchange += 1;
+            }
+
+            telemetry.addData("Xchange ", Xchange);
+
+            telemetry.update();
+        }
+
+        if (isStopRequested()) return;
         //run the autonomous
         Actions.runBlocking(
                 auto.build()

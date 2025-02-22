@@ -162,6 +162,7 @@ public class CLAWARM_TESTER extends OpMode {
         intakeClawLeft.setDirection(Servo.Direction.REVERSE);
         rightSusServo = hardwareMap.get(Servo.class, "rightSusServo");
         leftSusServo = hardwareMap.get(Servo.class, "leftSusServo");
+        sweeper = hardwareMap.get(Servo.class, "sweeper");
         intake = new ActionClass.Intake(hardwareMap);
         outtake = new ActionClass.Outtake(hardwareMap);
 
@@ -192,77 +193,116 @@ public class CLAWARM_TESTER extends OpMode {
         bumper right = 0.9
         trigger right = 1.0
         */
-        option = gamepad1.left_trigger > 0;
-        if (option) {
+
+//        //for the outtake Arm
+//        option = gamepad1.left_trigger > 0;
+//        if (option) {
+//            if (gamepad1.dpad_left) {
+//                intakeClawRight.setPosition(0.0);
+//            }
+//            if (gamepad1.dpad_up) {
+//                intakeClawRight.setPosition(0.1);
+//            }
+//            if (gamepad1.dpad_right) {
+//                intakeClawRight.setPosition(0.2);
+//            }
+//            if (gamepad1.dpad_down) {
+//                intakeClawRight.setPosition(0.3);
+//            }
+//            if (gamepad1.x) {
+//                intakeClawRight.setPosition(0.4);
+//            }
+//            if (gamepad1.y) {
+//                intakeClawRight.setPosition(0.5);
+//            }
+//            if (gamepad1.b) {
+//                intakeClawRight.setPosition(0.6);
+//            }
+//            if (gamepad1.a) {
+//                intakeClawRight.setPosition(0.7);
+//            }
+//            if (gamepad1.left_bumper) {
+//                intakeClawRight.setPosition(0.8);
+//            }
+//            if (gamepad1.right_bumper) {
+//                intakeClawRight.setPosition(0.9);
+//            }
+//            if (gamepad1.right_trigger > 0) {
+//                intakeClawRight.setPosition(1.0);
+//            }
+//        }
+//        else {
+//            if (gamepad1.dpad_left) {
+//                intakeClawLeft.setPosition(0.0);
+//            }
+//            if (gamepad1.dpad_up) {
+//                intakeClawLeft.setPosition(0.1);
+//            }
+//            if (gamepad1.dpad_right) {
+//                intakeClawLeft.setPosition(0.2);
+//            }
+//            if (gamepad1.dpad_down) {
+//                intakeClawLeft.setPosition(0.3);
+//            }
+//            if (gamepad1.x) {
+//                intakeClawLeft.setPosition(0.4);
+//            }
+//            if (gamepad1.y) {
+//                intakeClawLeft.setPosition(0.5);
+//            }
+//            if (gamepad1.b) {
+//                intakeClawLeft.setPosition(0.6);
+//            }
+//            if (gamepad1.a) {
+//                intakeClawLeft.setPosition(0.7);
+//            }
+//            if (gamepad1.left_bumper) {
+//                intakeClawLeft.setPosition(0.8);
+//            }
+//            if (gamepad1.right_bumper) {
+//                intakeClawLeft.setPosition(0.9);
+//            }
+//            if (gamepad1.right_trigger > 0) {
+//                intakeClawLeft.setPosition(1.0);
+//            }
+//        }
+
+
+        //for the sweeper
             if (gamepad1.dpad_left) {
-                intakeClawRight.setPosition(0.0);
+                sweeper.setPosition(0.0);
             }
             if (gamepad1.dpad_up) {
-                intakeClawRight.setPosition(0.1);
+                sweeper.setPosition(0.1);
             }
             if (gamepad1.dpad_right) {
-                intakeClawRight.setPosition(0.2);
+                sweeper.setPosition(0.2);
             }
             if (gamepad1.dpad_down) {
-                intakeClawRight.setPosition(0.3);
+                sweeper.setPosition(0.3);
             }
             if (gamepad1.x) {
-                intakeClawRight.setPosition(0.4);
+                sweeper.setPosition(0.4);
             }
             if (gamepad1.y) {
-                intakeClawRight.setPosition(0.5);
+                sweeper.setPosition(0.5);
             }
             if (gamepad1.b) {
-                intakeClawRight.setPosition(0.6);
+                sweeper.setPosition(0.6);
             }
             if (gamepad1.a) {
-                intakeClawRight.setPosition(0.7);
+                sweeper.setPosition(0.7);
             }
             if (gamepad1.left_bumper) {
-                intakeClawRight.setPosition(0.8);
+                sweeper.setPosition(0.8);
             }
             if (gamepad1.right_bumper) {
-                intakeClawRight.setPosition(0.9);
+                sweeper.setPosition(0.9);
             }
             if (gamepad1.right_trigger > 0) {
-                intakeClawRight.setPosition(1.0);
+                sweeper.setPosition(1.0);
             }
-        }
-        else {
-            if (gamepad1.dpad_left) {
-                intakeClawLeft.setPosition(0.0);
-            }
-            if (gamepad1.dpad_up) {
-                intakeClawLeft.setPosition(0.1);
-            }
-            if (gamepad1.dpad_right) {
-                intakeClawLeft.setPosition(0.2);
-            }
-            if (gamepad1.dpad_down) {
-                intakeClawLeft.setPosition(0.3);
-            }
-            if (gamepad1.x) {
-                intakeClawLeft.setPosition(0.4);
-            }
-            if (gamepad1.y) {
-                intakeClawLeft.setPosition(0.5);
-            }
-            if (gamepad1.b) {
-                intakeClawLeft.setPosition(0.6);
-            }
-            if (gamepad1.a) {
-                intakeClawLeft.setPosition(0.7);
-            }
-            if (gamepad1.left_bumper) {
-                intakeClawLeft.setPosition(0.8);
-            }
-            if (gamepad1.right_bumper) {
-                intakeClawLeft.setPosition(0.9);
-            }
-            if (gamepad1.right_trigger > 0) {
-                intakeClawLeft.setPosition(1.0);
-            }
-        }
+
     }
 }
 

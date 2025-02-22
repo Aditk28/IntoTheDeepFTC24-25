@@ -2,8 +2,12 @@ package org.firstinspires.ftc.teamcode;
 
 import androidx.annotation.NonNull;
 
+import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
+import com.acmerobotics.roadrunner.ParallelAction;
+import com.acmerobotics.roadrunner.SequentialAction;
+import com.acmerobotics.roadrunner.SleepAction;
 import com.qualcomm.hardware.rev.RevColorSensorV3;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -11,11 +15,18 @@ import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.vision.opencv.PredominantColorProcessor;
 
 
 public class ActionClass {
 
+    static FtcDashboard dashboard = FtcDashboard.getInstance();
+    static Telemetry telemetry;
+    public static void setTelemetry(Telemetry t) {
+        telemetry = t;
+    }
     public static class Intake{
         private DcMotorEx lift;
         private Servo rotater;
@@ -26,28 +37,33 @@ public class ActionClass {
 
         private Servo intakeClawLeft;
         private Servo sweeper;
+        private ColorSensor colorSensor;
 
-        private RevColorSensorV3 colorSensor;
+//        private ColorSensor colorSensor;
         public static final double intakeGrabPos = 0.03;
         public static final double intakeMovePos = 0.35;
         public static final double intakeTransferPos = 0.75;
 
-        public static final double rightMoreClose = 0.7;
-        public static final double rightClosePos = 0.55;
-        public static final double rightOpenPos = 0.0;
+        public static final double rightMoreClose = 0.27;
+        public static final double rightClosePos = 0.4;
+        public static final double rightOpenPos = 0.55;
 
-        public static final double leftMoreClose = 0.7;
-        public static final double leftClosePos = 0.6;
-        public static final double leftOpenPos = 0.35;
+        public static final double leftMoreClose = 0.27;
+        public static final double leftClosePos = 0.4;
+        public static final double leftOpenPos = 0.55;
         public static final double rotaterDefault = 0.7;
         public static final double rotaterTurned = 1.0; //.35
 
-        public static final double sweeperInPos = .8;
+        public static final double sweeperInPos = 0.375;
 
-        public static final double sweeperOutPos = .8;
+        public static final double sweeperOutPos = 0.97;
 
 
+        private Color colorToDetect;
 
+        public void setColorToDetect(Color colorToDetect) {
+            this.colorToDetect = colorToDetect;
+        }
 
         public Intake(HardwareMap hardwareMap){
             lift = hardwareMap.get(DcMotorEx.class, "horizontalLift");
@@ -59,8 +75,7 @@ public class ActionClass {
             intakeClawLeft = hardwareMap.get(Servo.class, "intakeClawLeft");
             intakeClawLeft.setDirection(Servo.Direction.REVERSE);
             sweeper = hardwareMap.get(Servo.class, "sweeper");
-            colorSensor = hardwareMap.get(RevColorSensorV3.class, "colorSensor");
-            colorSensor.enableLed(true);
+            colorSensor = new ColorSensor(hardwareMap);
         }
 
         public class sweeper implements Action{
@@ -97,10 +112,10 @@ public class ActionClass {
             }
         }
         public Action closeClaw() {
-            return new Claw(rightClosePos, leftClosePos);
+            return new Claw(rightMoreClose, leftMoreClose);
         }
         public Action openClaw() {
-            return new Claw(rightOpenPos, leftClosePos);
+            return new Claw(rightOpenPos, leftOpenPos);
         }
 
         public class Rotater implements Action{
@@ -132,11 +147,9 @@ public class ActionClass {
             // checks if the lift motor has been powered on
             private boolean initialized = false;
             private int pos;
-            private Color color;
 
-            public LiftOut(int pos, Color color) {
+            public LiftOut(int pos) {
                 this.pos = pos;
-                this.color = color;
             }
 
             // actions are formatted via telemetry packets as below
@@ -150,31 +163,30 @@ public class ActionClass {
 
                 // checks lift's current position
                 double currentPosition = lift.getCurrentPosition();
-                packet.put("liftPos", currentPosition);
 
                 if (currentPosition < pos) {
-                    // true causes the action to rerun
 
-                    //if a color is detected, stop
-                    if (color.equals(Color.BLUE)) {
-                        if (colorSensor.blue() > 500) {
+                    PredominantColorProcessor.Result result = colorSensor.colorSensor.getAnalysis();
+
+                    if (colorToDetect.equals(Color.RED)) {
+                        if (result.closestSwatch == PredominantColorProcessor.Swatch.RED) {
+                            lift.setPower(0);
                             return false;
                         }
                     }
-                    else if (color.equals(Color.RED)) {
-                        if (colorSensor.red() > 500) {
+                    else if (colorToDetect.equals(Color.BLUE)) {
+                        if (result.closestSwatch == PredominantColorProcessor.Swatch.BLUE) {
+                            lift.setPower(0);
                             return false;
                         }
                     }
-
                     return true;
+
                 } else {
                     // false stops action rerun
                     lift.setPower(0);
                     return false;
                 }
-                // overall, the action powers the lift until it surpasses
-                // 3000 encoder ticks, then powers it off
             }
         }
 
@@ -183,12 +195,9 @@ public class ActionClass {
 
         }
         public Action liftOut(int pos) {
-            return new LiftOut(pos, Color.NONE);
-        }
-        public Action liftOut(int pos, Color color) {
-            return new LiftOut(pos, color);
-        }
+            return new LiftOut(pos);
 
+        }
         public class LiftIn implements Action {
             private int pos;
             public LiftIn(int pos) {
@@ -198,9 +207,22 @@ public class ActionClass {
 
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
-                lift.setTargetPosition(pos);
-                lift.setPower(1);
-                return false;
+                lift.setPower(-1.0);
+
+                // checks lift's current position
+                double currentPosition = lift.getCurrentPosition();
+//                telemetry.addData("liftPos", currentPosition);
+//                telemetry.update();
+
+
+                if (currentPosition > pos) {
+                    // true causes the action to rerun
+                    return true;
+                } else {
+                    // false stops action rerun
+                    lift.setPower(0);
+                    return false;
+                }
             }
         }
 
@@ -233,6 +255,16 @@ public class ActionClass {
         public Action armGrabPos() { return moveArm(intakeGrabPos); }
         public Action armTransferPos() { return moveArm(intakeTransferPos); }
 
+        public Action pickUpBlock() {
+            return new SequentialAction(
+                    armGrabPos(),
+                    new SleepAction(0.07),
+                    closeClaw(),
+                    new SleepAction(0.25),
+                    armMovePos()
+            );
+        }
+
     }
 
     public static class Outtake{
@@ -245,12 +277,12 @@ public class ActionClass {
 
         public static final double grabPos = .47; // .43
         public static final double almostClosedPos = .37; // .37
-        public static final double halfCLosed = .34; // .34
+        public static final double halfCLosed = 0.37; // .34
         public static final double openPos = .31; // .33
-        public static final double armTransferPos = .9;
-        public static final double armOuttakePos = 0.6; //1
-        public static final double armOuttakePos2 = .7;
-        public static final double armWallPosBack = 0.2; //2
+        public static final double armTransferPos = 1.0;
+        public static final double armOuttakePos = 0.735; //1
+        public static final double armOuttakePos2 = 0.77;
+        public static final double armWallPosBack = 0.24; //2
 
         public static final double armWallPos = .93;
         public static final double outtakeRotaterPickup = .74;
@@ -260,12 +292,9 @@ public class ActionClass {
         public Outtake(HardwareMap hardwareMap){
             leftVerticalLift = hardwareMap.get(DcMotorEx.class, "leftVerticalLift");
             rightVerticalLift = hardwareMap.get(DcMotorEx.class, "rightVerticalLift");
-            rightVerticalLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            leftVerticalLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             claw = hardwareMap.get(Servo.class, "armClaw");
             rightArm = hardwareMap.get(Servo.class, "rightArm"); // og
             leftArm = hardwareMap.get(Servo.class, "leftArm");
-            leftArm.setDirection(Servo.Direction.REVERSE);
             outtakeRotater = hardwareMap.get(Servo.class, "outtakeRotater");
         }
 
@@ -433,23 +462,6 @@ public class ActionClass {
 
     }
 
-    public static class DistanceSensors {
-        public  DistanceSensor distanceSensorLeft;
-        public  DistanceSensor distanceSensorRight;
-
-        public DistanceSensors(HardwareMap hardwareMap) {
-            distanceSensorLeft = hardwareMap.get(DistanceSensor.class, "distanceSensorLeft");
-            distanceSensorRight = hardwareMap.get(DistanceSensor.class, "distanceSensorRight");
-        }
-
-        public  double getLeftDistance() {
-            return distanceSensorLeft.getDistance(DistanceUnit.INCH);
-        }
-
-        public  double getRightDistance() {
-            return distanceSensorRight.getDistance(DistanceUnit.INCH);
-        }
-    }
 
 //    public static class transfer {
 //        Intake i;

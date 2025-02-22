@@ -21,6 +21,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.vision.opencv.PredominantColorProcessor;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,7 +41,6 @@ public class TeleOp extends OpMode {
     public Servo leftArm;
     public Servo rotater;
     public Servo intakeRightArm;
-
     public Servo intakeLeftArm;
 
     public Servo intakeClawRight;
@@ -58,10 +58,6 @@ public class TeleOp extends OpMode {
     public ActionClass.Intake intake;
     public ActionClass.Outtake outtake;
 
-    public ActionClass.DistanceSensors distanceSensors;
-
-    public RevColorSensorV3 colorSensor;
-
     //Reduces speed when true
     public boolean turtleMode = false;
 
@@ -72,10 +68,10 @@ public class TeleOp extends OpMode {
     public double rotationSpeed = 1;
     public boolean fieldOriented = false;
 
-    public static final double armTransferPos = 1.0;
-    public static final double armOuttakePos = 0.775; //1
-    public static final double armOuttakePos2 = 0.9;
-    public static final double armWallPosBack = 0.275; //2
+    public static final double armTransferPos = ActionClass.Outtake.armTransferPos;
+    public static final double armOuttakePos = ActionClass.Outtake.armOuttakePos; //1
+    public static final double armOuttakePos2 = ActionClass.Outtake.armOuttakePos2;
+    public static final double armWallPosBack = ActionClass.Outtake.armWallPosBack; //2
 
     public double armClawClose = ActionClass.Outtake.grabPos;
     public double armClawOpen = ActionClass.Outtake.openPos;
@@ -84,13 +80,13 @@ public class TeleOp extends OpMode {
     public double intakeMovePosRight = ActionClass.Intake.intakeMovePos;
     public double intakeTransferPosRight = ActionClass.Intake.intakeTransferPos;
 
-    public static final double rightOpenPos = ActionClass.Intake.rightMoreClose;
+    public static final double rightOpenPos = ActionClass.Intake.rightOpenPos;
     public static final double rightClosePos = ActionClass.Intake.rightClosePos;
-    public static final double rightMoreClose = ActionClass.Intake.rightOpenPos;
+    public static final double rightMoreClose = ActionClass.Intake.rightMoreClose;
 
-    public static final double leftOpenPos = ActionClass.Intake.leftMoreClose;
+    public static final double leftOpenPos = ActionClass.Intake.leftOpenPos;
     public static final double leftClosePos = ActionClass.Intake.leftClosePos;
-    public static final double leftMoreClose = ActionClass.Intake.leftOpenPos;
+    public static final double leftMoreClose = ActionClass.Intake.leftMoreClose;
 
     public double rotaterDefault = ActionClass.Intake.rotaterDefault;
     public double rotaterTurned = ActionClass.Intake.rotaterTurned;
@@ -157,17 +153,16 @@ public class TeleOp extends OpMode {
         // Initialize the hardware variables. Note that the strings used here as parameters
         // to 'get' must correspond to the names assigned during the robot configuration
         // step (using the FTC Robot Controller app on the phone).
-        drive = new MecanumDrive(hardwareMap, new Pose2d(0,0,0));
+        drive = new MecanumDrive(hardwareMap, new Pose2d(0, 0, 0));
         leftVerticalLift = hardwareMap.get(DcMotorEx.class, "leftVerticalLift");
         rightVerticalLift = hardwareMap.get(DcMotorEx.class, "rightVerticalLift");
         horizontalLift = hardwareMap.get(DcMotorEx.class, "horizontalLift");
         horizontalLift.setTargetPosition(0);
         rightArm = hardwareMap.get(Servo.class, "rightArm");
         leftArm = hardwareMap.get(Servo.class, "leftArm");
-        leftArm.setDirection(Servo.Direction.REVERSE);
         armClaw = hardwareMap.get(Servo.class, "armClaw");
         rotater = hardwareMap.get(Servo.class, "rotater");
-        outtakeRotater = hardwareMap.get(Servo.class,   "outtakeRotater");
+        outtakeRotater = hardwareMap.get(Servo.class, "outtakeRotater");
         intakeRightArm = hardwareMap.get(Servo.class, "intakeRightArm"); //og
         intakeLeftArm = hardwareMap.get(Servo.class, "intakeLeftArm");
         intakeLeftArm.setDirection(Servo.Direction.REVERSE);
@@ -182,9 +177,7 @@ public class TeleOp extends OpMode {
         leftSusServo = hardwareMap.get(Servo.class, "leftSusServo");
         intake = new ActionClass.Intake(hardwareMap);
         outtake = new ActionClass.Outtake(hardwareMap);
-        distanceSensors = new ActionClass.DistanceSensors(hardwareMap);
-        colorSensor = hardwareMap.get(RevColorSensorV3.class, "colorSensor");
-        colorSensor.enableLed(true);
+//        distanceSensors = new ActionClass.DistanceSensors(hardwareMap);
 
         //resetting encoders cause why not
         leftVerticalLift.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
@@ -198,8 +191,9 @@ public class TeleOp extends OpMode {
 
 //        horizontalLift.setPIDFCoefficients(DcMotorEx.RunMode.RUN_TO_POSITION, new PIDFCoefficients(0, 0, 0, 0));
     }
+
     @Override
-    public void loop()   {
+    public void loop() {
         //
         //horizontal slides
 
@@ -215,47 +209,12 @@ public class TeleOp extends OpMode {
             horizontalLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         }
 
-//        if (slidesOut) {
-//            horizontalLift.setTargetPosition(2100);
-//            horizontalLift.setPower(0.9);
-//        } else if (slidesIn) {
-//            horizontalLift.setTargetPosition(0);
-//            horizontalLift.setPower(0.9); //try negative if this doesnt work
-//        } else if (slidesOff) {
-//            horizontalLift.setTargetPosition(0);
-//            horizontalLift.setPower(0);
-//            horizontalLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-//        }
-//
-//        if (gamepad2.right_bumper || gamepad1.right_trigger > 0) {
-//            if (slidesIn) {
-//                slidesOff = true;
-//                slidesIn = false;
-//                slidesOut = false;
-//            }
-//            else {
-//                slidesOff = false;
-//                slidesOut = true;
-//            }
-//        } else if (gamepad2.left_bumper || gamepad1.left_trigger > 0) {
-//            if (slidesOut) {
-//                slidesOff = true;
-//                slidesIn = false;
-//                slidesOut = false;
-//            }
-//            else {
-//                slidesOff = false;
-//                slidesIn = true;
-//            }
-//        }
-
         //actions
         TelemetryPacket packet = new TelemetryPacket();
 
         if (!runningActions.isEmpty()) {
             runnable = false;
-        }
-        else {
+        } else {
             runnable = true;
         }
         List<Action> newActions = new ArrayList<>();
@@ -283,81 +242,11 @@ public class TeleOp extends OpMode {
         //these mechanisms will only work when there is no action being performed, or when "runnable"
         if (runnable) {
 
-            //** MECHANISMS **: for mechanisms, we will use actions
-            //AUTOMATIC EXTEND INTAKE
-//            if (gamepad1.dpad_left || gamepad2.dpad_left) {
-//                runningActions.add(new SequentialAction(
-//                        intake.armMovePos(),
-//                        new SleepAction(.5),
-//                        new ParallelAction(
-//                                intake.liftOut(1500),
-//                                intake.defaultRotater()
-//                        )
-//                ));
-//            }
-
-            //AUTOMATIC BRING IN INTAKE, will only happen when horizontal lift is out
-//            if ((gamepad1.dpad_right || gamepad2.dpad_right) && horizontalLift.getCurrentPosition() > 1300) {
-//                runningActions.add(new SequentialAction(
-//                        new ParallelAction(
-//                                intake.armMovePos(),
-//                                intake.liftIn(0)
-//                        )
-//                ));
-//            }
-
-//            //AUTOMATIC TRANSFER, will only happen when horizontal lift is in
-//            else if ((gamepad1.dpad_right || gamepad2.dpad_right) && (horizontalLift.getCurrentPosition() < 1300)) {
-//                runningActions.add(new SequentialAction(
-//                        new ParallelAction(
-//                                outtake.liftDown(50),
-//                                outtake.openClaw(),
-//                                intake.armMovePos(),
-//                                intake.liftOut(400)
-//                        ),
-//                        new ParallelAction(
-//                                intake.armTransferPos(),
-//                                outtake.armTransferPos()
-//                        ),
-//                        new SleepAction(2),
-//                        new ParallelAction(
-//                                outtake.closeClaw(),
-//                                new SleepAction(.5),
-//                                intake.openClaw()
-//                        )
-//                ));
-//            }
-
-//            //AUTOMATIC GROUND OUTTAKE WHILE WALL INTAKE
-//            if (gamepad2.dpad_down) {
-//                runningActions.add(new SequentialAction(
-//                        new ParallelAction(
-//                                outtake.armTransferPos(),
-//                                outtake.openClaw()
-//                        ),
-//                        new SleepAction(1),
-//                        intake.armGrabPos(),
-//                        intake.openClaw()
-//                ));
-//            }
-
-//            //AUTOMATIC CLIP OUTTAKE
-//            if (gamepad2.dpad_up) {
-//                runningActions.add(new SequentialAction(
-//                        outtake.armOuttakePos(),
-//                        new SleepAction(1.5),
-//                        outtake.liftDown(leftVerticalLift.getCurrentPosition() - 100),
-//                        outtake.openClaw()
-//                ));
-//            }
-
-
             //** MANUAL CONTROLS **
             //armClaw
             if (gamepad2.a) {
                 armClaw.setPosition(armClawOpen);
-            }
-            else if (gamepad2.y) {
+            } else if (gamepad2.y) {
                 armClaw.setPosition(armClawClose);
             }
 
@@ -366,8 +255,7 @@ public class TeleOp extends OpMode {
                 outtakeRotater.setPosition(outtakeRotaterPickup);
                 rightArm.setPosition(armWallPosBack);
                 leftArm.setPosition(armWallPosBack);
-            }
-            else if (gamepad1.y) {
+            } else if (gamepad1.y) {
                 armClaw.setPosition(armClawClose);
                 try {
                     Thread.sleep(200);
@@ -380,21 +268,21 @@ public class TeleOp extends OpMode {
             }
 
             //rotater to preset position
-            if ( gamepad1.right_bumper && rotater.getPosition() != rotaterDefault) {
+            if (gamepad1.right_bumper && rotater.getPosition() != rotaterDefault) {
                 rotater.setPosition(rotaterDefault);
             }
-            if ( gamepad1.left_bumper && rotater.getPosition() != rotaterTurned) {
+            if (gamepad1.left_bumper && rotater.getPosition() != rotaterTurned) {
                 rotater.setPosition(rotaterTurned);
             }
 
             //rotater turn small amount
-            if (gamepad1.dpad_left && rotater.getPosition() < .6) {
+            if (gamepad2.dpad_left && rotater.getPosition() < .6) {
                 runningActions.add(new SequentialAction(
                         intake.rotaterPos((rotater.getPosition() + .1)),
                         new SleepAction(.1)
                 ));
             }
-            if (gamepad1.dpad_right && rotater.getPosition() > .2) {
+            if (gamepad2.dpad_right && rotater.getPosition() > .2) {
                 runningActions.add(new SequentialAction(
                         intake.rotaterPos((rotater.getPosition() - .1)),
                         new SleepAction(.1)
@@ -402,11 +290,11 @@ public class TeleOp extends OpMode {
             }
 
             //suspension
-            if (gamepad2.dpad_up){
+            if (gamepad2.dpad_up) {
                 rightSusServo.setPosition(0);
                 leftSusServo.setPosition(1);
             }
-            if (gamepad2.dpad_down){
+            if (gamepad2.dpad_down) {
                 rightSusServo.setPosition(.5);
                 leftSusServo.setPosition(.15);
             }
@@ -417,18 +305,15 @@ public class TeleOp extends OpMode {
                 outtakeRotater.setPosition(outtakeRotaterOuttake);
                 rightArm.setPosition(armOuttakePos);
                 leftArm.setPosition(armOuttakePos);
-            }
-            else if (gamepad2.right_stick_x > .85) {
+            } else if (gamepad2.right_stick_x > .85) {
                 outtakeRotater.setPosition(outtakeRotaterPickup);
                 rightArm.setPosition(armOuttakePos2);
                 leftArm.setPosition(armOuttakePos2);
-            }
-            else if (gamepad2.right_stick_y > .85) {
+            } else if (gamepad2.right_stick_y > .85) {
                 outtakeRotater.setPosition(outtakeRotaterPickup);
                 rightArm.setPosition(armWallPosBack);
                 leftArm.setPosition(armWallPosBack);
-            }
-            else if (gamepad2.right_stick_x < -.85) {
+            } else if (gamepad2.right_stick_x < -.85) {
                 outtakeRotater.setPosition(outtakeRotaterOuttake);
                 rightArm.setPosition(armTransferPos);
                 leftArm.setPosition(armTransferPos);
@@ -436,24 +321,24 @@ public class TeleOp extends OpMode {
 
             //intakeClawRight
 
-                if (gamepad1.x || gamepad2.x) {
-                    intakeRightArm.setPosition(intakeGrabPosRight);
-                    intakeLeftArm.setPosition(intakeGrabPosRight);
-                    try {
-                        Thread.sleep(70);
-                    } catch (InterruptedException e) {
-                        throw new RuntimeException(e);
-                    }
-                    intakeClawRight.setPosition(rightMoreClose);
-                    intakeClawLeft.setPosition(leftMoreClose);
-                    try {
-                        Thread.sleep(250);
-                    } catch (InterruptedException e) {
-                        throw new RuntimeException(e);
-                    }
-                    intakeRightArm.setPosition(intakeMovePosRight + 0.04);
-                    intakeLeftArm.setPosition(intakeMovePosRight + 0.04);
+            if (gamepad1.x || gamepad2.x) {
+                intakeRightArm.setPosition(intakeGrabPosRight);
+                intakeLeftArm.setPosition(intakeGrabPosRight);
+                try {
+                    Thread.sleep(70);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
                 }
+                intakeClawRight.setPosition(rightMoreClose);
+                intakeClawLeft.setPosition(leftMoreClose);
+                try {
+                    Thread.sleep(250);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+                intakeRightArm.setPosition(intakeMovePosRight + 0.04);
+                intakeLeftArm.setPosition(intakeMovePosRight + 0.04);
+            }
 
             if (gamepad1.b || gamepad2.b) {
                 intakeClawRight.setPosition(rightOpenPos);
@@ -466,88 +351,70 @@ public class TeleOp extends OpMode {
             if (intakeRightArm.getPosition() != intakeTransferPosRight && intakeLeftArm.getPosition() != intakeTransferPosRight && gamepad2.left_stick_x > .85) {
                 intakeRightArm.setPosition(intakeTransferPosRight);
                 intakeLeftArm.setPosition(intakeTransferPosRight);
-            }
-            else if (intakeRightArm.getPosition() != intakeMovePosRight && intakeLeftArm.getPosition() != intakeMovePosRight && gamepad2.left_stick_y < -.85) {
+            } else if (intakeRightArm.getPosition() != intakeMovePosRight && intakeLeftArm.getPosition() != intakeMovePosRight && gamepad2.left_stick_y < -.85) {
                 intakeRightArm.setPosition(intakeMovePosRight);
                 intakeLeftArm.setPosition(intakeMovePosRight);
-            }
-            else if (intakeRightArm.getPosition() != intakeGrabPosRight && intakeLeftArm.getPosition() != intakeGrabPosRight && gamepad2.left_stick_x < -.85) {
+            } else if (intakeRightArm.getPosition() != intakeGrabPosRight && intakeLeftArm.getPosition() != intakeGrabPosRight && gamepad2.left_stick_x < -.85) {
                 intakeRightArm.setPosition(intakeGrabPosRight);
                 intakeLeftArm.setPosition(intakeGrabPosRight);
             }
 
 //            verticalLift
             if (
-            ((gamepad2.left_trigger != 0)) ){
+                    ((gamepad2.left_trigger != 0))) {
                 rightVerticalLift.setPower(0.9);
                 leftVerticalLift.setPower(-.9);
             } else if (
-                    ((gamepad2.right_trigger != 0 && leftVerticalLift.getCurrentPosition() <= 4200) )) {
+                    ((gamepad2.right_trigger != 0 && leftVerticalLift.getCurrentPosition() <= 4200))) {
                 rightVerticalLift.setPower(-0.9);
                 leftVerticalLift.setPower(.9);
-            }
-            else if (leftVerticalLift.getCurrentPosition() > 2000) {
+            } else if (leftVerticalLift.getCurrentPosition() > 2000) {
                 rightVerticalLift.setPower(-0.02);
                 leftVerticalLift.setPower(0.02);
-            }
-            else {
+            } else {
                 rightVerticalLift.setPower(0.0);
                 leftVerticalLift.setPower(0.0);
             }
 
+            //turtleMode
+            if (gamepad1.right_stick_button && !turtleMode) {
+                turtleMode = true;
+                robotSpeed = TURTLE_SPEED;
+            } else if (gamepad1.left_stick_button && turtleMode) {
+                turtleMode = false;
+                robotSpeed = NORMAL_SPEED;
+            }
 
-//            if ((gamepad2.right_bumper && horizontalLift.getCurrentPosition() <= 2100)) {
-//                horizontalLift.setPower(0.9);
-//            } else if ((gamepad2.left_bumper && horizontalLift.getCurrentPosition() > 0)) {
-//                horizontalLift.setPower(-0.9);
-//            } else {
-//                horizontalLift.setPower(0);
-//                horizontalLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-//            }
-        }
+            //movement
+            drive.setDrivePowers(
+                    new PoseVelocity2d(new Vector2d(-gamepad1.left_stick_y * robotSpeed,
+                            -gamepad1.left_stick_x * robotSpeed),
+                            -gamepad1.right_stick_x * robotSpeed * rotationSpeed
+                    )
+            );
 
-        //these mechanisms can work while actions are happening
+//            drive.updatePoseEstimate();
 
-        //turtleMode
-        if (gamepad1.right_stick_button && !turtleMode) {
-            turtleMode = true;
-            robotSpeed = TURTLE_SPEED;
-        } else if (gamepad1.left_stick_button && turtleMode) {
-            turtleMode = false;
-            robotSpeed = NORMAL_SPEED;
-        }
-
-        //movement
-        drive.setDrivePowers(
-                new PoseVelocity2d(new Vector2d(-gamepad1.left_stick_y * robotSpeed,
-                        -gamepad1.left_stick_x * robotSpeed),
-                        -gamepad1.right_stick_x * robotSpeed * rotationSpeed
-                )
-        );
-
-        drive.updatePoseEstimate();
-
-        //telemetry data
-        telemetry.addData("Status", "Run Time: " + runtime.toString());
+            //telemetry data
+            telemetry.addData("Status", "Run Time: " + runtime.toString());
 //        telemetry.addData("DriveMode: ", (turtleMode) ? ("turtleMode") : ("Normal"));
 //        telemetry.addData("DriveType: ", (fieldOriented) ? ("Field-Oriented Drive") : ("Robot-Oriented"));
 //        telemetry.addData("rightLiftMotorPosition", rightVerticalLift.getCurrentPosition());
 //        telemetry.addData("leftLiftMotorPosition", leftVerticalLift.getCurrentPosition());
 //        telemetry.addData("horizontalliftMotorPosition", horizontalLift.getCurrentPosition());
-        telemetry.addData("rightArmServoPos", rightArm.getPosition());
+            telemetry.addData("rightArmServoPos", rightArm.getPosition());
+            telemetry.addData("leftArmServoPos", leftArm.getPosition());
 //        telemetry.addData("intakeClawRightPosition", intakeClawRight.getPosition());
-        telemetry.addData("intakeRightArmPosition", intakeRightArm.getPosition());
-        telemetry.addData("rotaterPosition", rotater.getPosition());
-        telemetry.addData("gamepad2 left stick x and y: ", gamepad2.left_stick_x + " " + gamepad2.left_stick_y);
-        telemetry.addData("Distance sensor left: ", distanceSensors.getLeftDistance());
-        telemetry.addData("Distance sensor right: ", distanceSensors.getRightDistance());
-        telemetry.addData("Blue  ", colorSensor.blue());
-        telemetry.addData("Red ", colorSensor.red());
-        telemetry.addData("distance ", colorSensor.getDistance(DistanceUnit.INCH));
+            telemetry.addData("intakeRightArmPosition", intakeRightArm.getPosition());
+            telemetry.addData("rotaterPosition", rotater.getPosition());
+            telemetry.addData("gamepad2 left stick x and y: ", gamepad2.left_stick_x + " " + gamepad2.left_stick_y);
+//        telemetry.addData("Distance sensor left: ", distanceSensors.getLeftDistance());
+//        telemetry.addData("Distance sensor right: ", distanceSensors.getRightDistance());
+            telemetry.update();
+        }
     }
+
 }
-
-
 
 
 
