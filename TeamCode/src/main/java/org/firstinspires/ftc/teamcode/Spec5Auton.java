@@ -10,7 +10,6 @@ import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.Servo;
 
 @Config
 @Autonomous(name = "5 SPEC AUTON", group = "Autonomous")
@@ -36,7 +35,7 @@ public class Spec5Auton extends LinearOpMode {
                 ))
 
                 //place first specimen
-                .splineToConstantHeading(new Vector2d(-6, 35), Math.toRadians(90))
+                .splineToConstantHeading(new Vector2d(-9, 35), Math.toRadians(90))
 
                 //open claw after drop
                 .afterTime(0, new ParallelAction(
@@ -64,8 +63,8 @@ public class Spec5Auton extends LinearOpMode {
                 //bring back third brick
                 .splineToConstantHeading(new Vector2d(-58, 14), Math.toRadians(270))
                 .splineToConstantHeading(new Vector2d(-58, 8), Math.toRadians(270))
-                .splineToConstantHeading(new Vector2d(-71, 14), Math.toRadians(90))
-                .splineToConstantHeading(new Vector2d(-71, 45), Math.toRadians(90))
+                .splineToConstantHeading(new Vector2d(-70.5, 14), Math.toRadians(90))
+                .splineToConstantHeading(new Vector2d(-70.5, 45), Math.toRadians(90))
 
                 //going to the pickup location
                 .splineToConstantHeading(new Vector2d(-60, 45), Math.toRadians(270))
@@ -85,8 +84,8 @@ public class Spec5Auton extends LinearOpMode {
                 ))
 
                 //go to submersible with the second specimen
-                .strafeToConstantHeading(new Vector2d(-6, 40))
-                .splineToConstantHeading(new Vector2d(-5, 27.5), Math.toRadians(90))
+                .strafeToConstantHeading(new Vector2d(-9, 40))
+                .splineToConstantHeading(new Vector2d(-8, 27.5), Math.toRadians(90))
 
 //                .strafeToConstantHeading(new Vector2d(-8, 40))
 //                .splineToConstantHeading(new Vector2d(-6, 29.5), Math.toRadians(90))
@@ -116,8 +115,8 @@ public class Spec5Auton extends LinearOpMode {
                 ))
 
                 //go to submersible with the third specimen
-                .strafeToConstantHeading(new Vector2d(-5, 40))
-                .splineToConstantHeading(new Vector2d(-4, 27.5), Math.toRadians(90))
+                .strafeToConstantHeading(new Vector2d(-8, 40))
+                .splineToConstantHeading(new Vector2d(-7, 27.5), Math.toRadians(90))
 
 //                .strafeToConstantHeading(new Vector2d(-7, 40))
 //                .splineToConstantHeading(new Vector2d(-4.5, 30.5), Math.toRadians(90))
@@ -148,8 +147,8 @@ public class Spec5Auton extends LinearOpMode {
                 ))
 
                 //go to submersible with the fourth specimen
-                .strafeToConstantHeading(new Vector2d(-4, 40))
-                .splineToConstantHeading(new Vector2d(-3, 27.5), Math.toRadians(90))
+                .strafeToConstantHeading(new Vector2d(-7, 40))
+                .splineToConstantHeading(new Vector2d(-6, 27.5), Math.toRadians(90))
 
 //                .strafeToConstantHeading(new Vector2d(-6, 40))
 //                .splineToConstantHeading(new Vector2d(-3, 30.5), Math.toRadians(90))
@@ -177,8 +176,8 @@ public class Spec5Auton extends LinearOpMode {
                 ))
 
                 //go to submersible with the fifth specimen
-                .strafeToConstantHeading(new Vector2d(-3, 40))
-                .splineToConstantHeading(new Vector2d(-2, 27.5), Math.toRadians(90))
+                .strafeToConstantHeading(new Vector2d(-6, 40))
+                .splineToConstantHeading(new Vector2d(-5, 27.5), Math.toRadians(90))
 
 //                .strafeToConstantHeading(new Vector2d(-5, 40))
 //                .splineToConstantHeading(new Vector2d(-1.25, 30), Math.toRadians(90))

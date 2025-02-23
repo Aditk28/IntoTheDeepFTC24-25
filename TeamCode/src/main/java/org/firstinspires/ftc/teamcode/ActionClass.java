@@ -5,18 +5,13 @@ import androidx.annotation.NonNull;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
-import com.acmerobotics.roadrunner.ParallelAction;
 import com.acmerobotics.roadrunner.SequentialAction;
 import com.acmerobotics.roadrunner.SleepAction;
-import com.qualcomm.hardware.rev.RevColorSensorV3;
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.vision.opencv.PredominantColorProcessor;
 
 
@@ -40,17 +35,17 @@ public class ActionClass {
         private ColorSensor colorSensor;
 
 //        private ColorSensor colorSensor;
-        public static final double intakeGrabPos = 0.03;
+        public static final double intakeGrabPos = 0.00;
         public static final double intakeMovePos = 0.35;
         public static final double intakeTransferPos = 0.75;
 
         public static final double rightMoreClose = 0.27;
         public static final double rightClosePos = 0.4;
-        public static final double rightOpenPos = 0.55;
+        public static final double rightOpenPos = 0.6;
 
         public static final double leftMoreClose = 0.27;
         public static final double leftClosePos = 0.4;
-        public static final double leftOpenPos = 0.55;
+        public static final double leftOpenPos = 0.57;
         public static final double rotaterDefault = 0.7;
         public static final double rotaterTurned = 1.0; //.35
 
@@ -280,9 +275,9 @@ public class ActionClass {
         public static final double halfCLosed = 0.37; // .34
         public static final double openPos = .31; // .33
         public static final double armTransferPos = 1.0;
-        public static final double armOuttakePos = 0.735; //1
+        public static final double armOuttakePos = 0.733; //1
         public static final double armOuttakePos2 = 0.77;
-        public static final double armWallPosBack = 0.24; //2
+        public static final double armWallPosBack = 0.2325; //2
 
         public static final double armWallPos = .93;
         public static final double outtakeRotaterPickup = .74;
